@@ -1,4 +1,3 @@
-# coding: utf-8
 """pismplot
 
 Plotting tools for PISM using matplotlib and iris

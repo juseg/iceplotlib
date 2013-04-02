@@ -1,4 +1,3 @@
-# coding: utf-8
 """iceplot.plot
 
 Provide the actual plotting interface
@@ -7,6 +6,8 @@ Provide the actual plotting interface
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.colors import LogNorm, Normalize
+
+from iceplot import cm
 
 def icemap(nc, t=0):
     """Draw basal topography, surface velocity and elevation contours"""
@@ -20,12 +21,12 @@ def icemap(nc, t=0):
 
     # draw bed topography
     plt.imshow(topg,
-      cmap=plt.cm.terrain,
-      norm=Normalize(-3000,6000))
+      cmap=cm.topo,
+      norm=Normalize(-6000,6000))
 
     # draw surface velocity
     im = plt.imshow(csurf,
-      cmap = plt.cm.Greys,
+      cmap = cm.velocity,
       norm = LogNorm(10, 10000))
 
     # draw ice outline
