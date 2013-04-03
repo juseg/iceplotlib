@@ -73,3 +73,28 @@ def basetempmap(nc, t=0):
     # return contour set for colormaps
     return cs
 
+def basevelmap(nc, t=0):
+    """Draw basal velocity map"""
+
+    # extract variables
+    x    = nc.variables['x'][:]
+    y    = nc.variables['y'][:]
+    uvel = nc.variables['uvelbase'][t].T
+    vvel = nc.variables['vvelbase'][t].T
+    thk  = nc.variables['thk'][t].T
+
+    # draw streamplot
+    ss = plt.streamplot(x, y, uvel, vvel,
+      density=5,
+      color='black',
+      linewidth=0.2)
+
+    # draw ice outline
+    plt.contour(thk,
+      levels     = [1, 5000],
+      colors     = 'black',
+      linewidths = 1)
+
+    # return stream plot set
+    return ss
+
