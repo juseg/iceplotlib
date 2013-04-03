@@ -1,4 +1,4 @@
-"""ice.figure
+"""iceplot.figure
 
 Provide GridFigure class and derivatives, where the figure size is computed from a given map size and an axes grid.
 """
