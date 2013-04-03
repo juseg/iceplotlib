@@ -7,7 +7,27 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.colors import LogNorm, Normalize
 
-from iceplot import cm
+from iceplot import cm as icm
+from iceplot import figure as ifig
+
+### Figure functions ###
+
+def gridfigure(mapsize, nrows_ncols, **kwargs):
+		"""Create a new figure and return a pismplot.figure.GridFigure instance"""
+		return plt.figure(FigureClass=ifig.GridFigure,
+      mapsize=mapsize, nrows_ncols=nrows_ncols, **kwargs)
+
+def simplefigure(mapsize, **kwargs):
+		"""Create a new figure and return a pismplot.figure.SimpleFigure instance"""
+		return plt.figure(FigureClass=ifig.SimpleFigure,
+      mapsize=mapsize, **kwargs)
+
+def doubleinlinefigure(mapsize, **kwargs):
+		"""Create a new figure and return a pismplot.figure.DoubleInlineFigure instance"""
+		return plt.figure(FigureClass=ifig.DoubleInlineFigure,
+      mapsize=mapsize, **kwargs)
+
+### Plotting functions ###
 
 def icemap(nc, t=0):
     """Draw basal topography, surface velocity and elevation contours"""
@@ -21,12 +41,12 @@ def icemap(nc, t=0):
 
     # draw bed topography
     plt.imshow(topg,
-      cmap=cm.topo,
+      cmap=icm.topo,
       norm=Normalize(-6000,6000))
 
     # draw surface velocity
     im = plt.imshow(csurf,
-      cmap = cm.velocity,
+      cmap = icm.velocity,
       norm = LogNorm(10, 10000))
 
     # draw ice outline
