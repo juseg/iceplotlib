@@ -64,7 +64,7 @@ def icemap(nc, t=0):
     # return velocity image for colormaps
     return im
 
-def basetempmap(nc, t=0):
+def bedtempmap(nc, t=0):
     """Draw basal pressure-adjusted temperature map"""
 
     # extract variables
@@ -93,7 +93,7 @@ def basetempmap(nc, t=0):
     # return contour set for colormaps
     return cs
 
-def basevelmap(nc, t=0):
+def bedvelmap(nc, t=0):
     """Draw basal velocity map"""
 
     # extract variables

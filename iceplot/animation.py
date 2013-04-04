@@ -26,13 +26,19 @@ class IceWriter(FFMpegFileWriter):
 
 ### Animations ###
 
-def iceanim(mapsize, nc, t=None):
-    """Draw basal topography, surface velocity and elevation contours"""
+def animate(funcname):
+    """Transform a plotting function into an animation function"""
 
-    def animate(i):
-      plt.cla()
-      iplt.icemap(nc, i)
+    def animfunc(mapsize, nc, t=None):
+      def update(i):
+        plt.cla()
+        getattr(iplt, funcname)(nc, i)
+      getattr(aplt, funcname)(mapsize, nc, 0)
+      return FuncAnimation(plt.gcf(), update, t)
 
-    im = aplt.icemap(mapsize, nc, 0)
-    return FuncAnimation(plt.gcf(), animate, t)
+    return animfunc
+
+iceanim     = animate('icemap')
+bedtempanim = animate('bedtempmap')
+bedvelanim  = animate('bedvelmap')
 

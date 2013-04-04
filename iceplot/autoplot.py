@@ -6,20 +6,28 @@ Provide an automatic plotting interface to plot entire figures with title and co
 from matplotlib import pyplot as plt
 from iceplot import plot as iplt
 
-def icemap(mapsize, nc, t=0):
-    """Draw basal topography, surface velocity and elevation contours"""
+def automatize(funcname, clabel=None):
+    """Transform a plotting function into an autoplotting function"""
 
-    # prepare figure
-    fig = iplt.simplefigure(mapsize, cbar_mode='single')
-    ax  = fig.grid[0]
-    ax.get_xaxis().set_visible(False)
-    ax.get_yaxis().set_visible(False)
+    def autofunc(mapsize, nc, t=0):
 
-    # plot
-    plt.sca(ax)
-    im = iplt.icemap(nc, 0)
+      # prepare figure
+      fig = iplt.simplefigure(mapsize, cbar_mode='single')
+      ax  = fig.grid[0]
+      ax.get_xaxis().set_visible(False)
+      ax.get_yaxis().set_visible(False)
 
-    # add colorbar
-    cb = plt.colorbar(im, ax.cax, format='%g')
-    cb.set_label('ice surface velocity (m/yr)')
+      # plot
+      plt.sca(ax)
+      sm = getattr(iplt, funcname)(nc, t)
+
+      # add colorbar
+      cb = plt.colorbar(sm, ax.cax, format='%g')
+      cb.set_label(clabel)
+
+    return autofunc
+
+icemap     = automatize('icemap',     'ice surface velocity (m/yr)')
+bedtempmap = automatize('bedtempmap', 'pressure-adjusted bed temperature (K)')
+bedvelmap  = automatize('bedvelmap',  'basal velocity (m/yr)')
 
