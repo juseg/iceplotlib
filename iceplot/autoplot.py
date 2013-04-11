@@ -14,20 +14,19 @@ def automatize(funcname, clabel=None):
       # prepare figure
       fig = iplt.simplefigure(mapsize, cbar_mode='single')
       ax  = fig.grid[0]
-      ax.get_xaxis().set_visible(False)
-      ax.get_yaxis().set_visible(False)
 
       # plot
       plt.sca(ax)
       sm = getattr(iplt, funcname)(nc, t)
 
       # add colorbar
-      cb = plt.colorbar(sm, ax.cax, format='%g')
-      cb.set_label(clabel)
+      if clabel is not None:
+        cb = plt.colorbar(sm,ax.cax, format='%g')
+        cb.set_label(clabel)
 
     return autofunc
 
 icemap     = automatize('icemap',     'ice surface velocity (m/yr)')
 bedtempmap = automatize('bedtempmap', 'pressure-adjusted bed temperature (K)')
-bedvelmap  = automatize('bedvelmap',  'basal velocity (m/yr)')
+bedvelmap  = automatize('bedvelmap')
 

@@ -50,17 +50,10 @@ class GridFigure(Figure):
 			cbar_mode=cbar_mode, cbar_location=cbar_location,
 			cbar_pad=pad*mm, cbar_size=pad*mm)
 
-		# initialize map labels [left, right, top, bottom]
+		# remove ticks
 		for ax in self.grid:
-			ax.maplabels=[False, False, False, False]
-
-		# add right labels in the last column
-		for ax in self.grid.axes_column[-1]:
-			ax.maplabels[1]=True
-
-		# add bottom labels in the last row
-		for ax in self.grid.axes_row[-1]:
-			ax.maplabels[3]=True
+			ax.get_xaxis().set_visible(False)
+			ax.get_yaxis().set_visible(False)
 
 		# add more axes
 		if sideplot:
