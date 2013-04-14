@@ -37,6 +37,22 @@ def bedtopoimage(nc, t=0, **kwargs):
       norm = kwargs.pop('norm', mcolors.Normalize(-6000,6000)),
       **kwargs)
 
+def airtempimage(nc, t=0, **kwargs):
+    """Draw near-surface air temperature."""
+    temp = nc.variables['air_temp'][t].T
+    return mplt.imshow(temp,
+      cmap = kwargs.pop('cmap', mplt.cm.Spectral_r),
+      norm = kwargs.pop('norm', mcolors.Normalize(-30,30)),
+      **kwargs)
+
+def precipimage(nc, t=0, **kwargs):
+    """Draw precipitation rate."""
+    prec = nc.variables['precipitation'][t].T
+    return mplt.imshow(prec,
+      cmap = kwargs.pop('cmap', mplt.cm.YlGnBu),
+      norm = kwargs.pop('norm', mcolors.LogNorm(0.1,10)),
+      **kwargs)
+
 def surfvelimage(nc, t=0, **kwargs):
     """Draw surface velocity."""
     thk   = nc.variables['thk'][t].T
