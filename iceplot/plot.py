@@ -27,11 +27,30 @@ def doubleinlinefigure(mapsize, **kwargs):
 		return mplt.figure(FigureClass=ifig.DoubleInlineFigure,
       mapsize=mapsize, **kwargs)
 
+### Data extraction ###
+
+def _extract(nc, varname, t):
+    var = nc.variables[varname]
+    """Extract data from a netcdf file"""
+
+    if t == 'djf':
+      return var[[12,0,1]].mean(axis=2).T
+    if t == 'mam':
+      return var[2:5].mean(axis=2).T
+    if t == 'jja':
+      return var[6:8].mean(axis=2).T
+    if t == 'son':
+      return var[9:11].mean(axis=2).T
+    if t == 'mean':
+      return var[:].mean(axis=2).T
+    else:
+      return var[t].T
+
 ### Image mapping functions ###
 
 def bedtopoimage(nc, t=0, **kwargs):
     """Draw bed topography."""
-    topg  = nc.variables['topg'][t].T
+    topg  = _extract(nc, 'topg', t)
     return mplt.imshow(topg,
       cmap = kwargs.pop('cmap', icm.topo),
       norm = kwargs.pop('norm', mcolors.Normalize(-6000,6000)),
@@ -39,7 +58,7 @@ def bedtopoimage(nc, t=0, **kwargs):
 
 def airtempimage(nc, t=0, **kwargs):
     """Draw near-surface air temperature."""
-    temp = nc.variables['air_temp'][t].T
+    temp = _extract(nc, 'air_temp', t)
     return mplt.imshow(temp,
       cmap = kwargs.pop('cmap', mplt.cm.Spectral_r),
       norm = kwargs.pop('norm', mcolors.Normalize(-30,30)),
@@ -47,7 +66,7 @@ def airtempimage(nc, t=0, **kwargs):
 
 def precipimage(nc, t=0, **kwargs):
     """Draw precipitation rate."""
-    prec = nc.variables['precipitation'][t].T
+    prec = _extract(nc, 'precipitation', t)
     return mplt.imshow(prec,
       cmap = kwargs.pop('cmap', mplt.cm.YlGnBu),
       norm = kwargs.pop('norm', mcolors.LogNorm(0.1,10)),
@@ -55,8 +74,8 @@ def precipimage(nc, t=0, **kwargs):
 
 def surfvelimage(nc, t=0, **kwargs):
     """Draw surface velocity."""
-    thk   = nc.variables['thk'][t].T
-    csurf = nc.variables['csurf'][t].T
+    thk   = _extract(nc, 'thk', t)
+    csurf = _extract(nc, 'csurf', t)
     csurf = np.ma.masked_where(thk < 1, csurf)
     return mplt.imshow(csurf,
       cmap = kwargs.pop('cmap', icm.velocity),
@@ -75,7 +94,7 @@ def surfvelimage(nc, t=0, **kwargs):
 
 def icemargincontour(nc, t=0, **kwargs):
     """Draw a contour along the ice margin."""
-    thk = nc.variables['thk'][t].T
+    thk = _extract(nc, 'thk', t)
     return mplt.contour(thk,
       levels     = [kwargs.pop('level', 1)],
       colors     = [kwargs.pop('color', 'black')],
@@ -83,8 +102,8 @@ def icemargincontour(nc, t=0, **kwargs):
 
 def surftopocontour(nc, t=0, **kwargs):
     """Draw ice surface topography contours."""
-    thk   = nc.variables['thk'][t].T
-    usurf = nc.variables['usurf'][t].T
+    thk   = _extract(nc, 'thk', t)
+    usurf = _extract(nc, 'usurf', t)
     usurf = np.ma.masked_where(thk < 1, usurf)
     return mplt.contour(usurf,
       levels     = kwargs.pop('levels', range(1000, 5000, 1000)),
@@ -123,8 +142,8 @@ def bedtempmap(nc, t=0):
     """Draw basal pressure-adjusted temperature map"""
 
     # extract variables
-    temp  = nc.variables['temppabase'][t].T
-    thk   = nc.variables['thk'][t].T
+    temp  = _extract(nc, 'temppabase', t)
+    thk   = _extract(nc, 'thk', t)
     temp  = np.ma.masked_where(thk < 1, temp)
 
     # draw basal temperature contours
@@ -154,11 +173,11 @@ def bedvelmap(nc, t=0):
     # extract variables
     x    = nc.variables['x'][:]
     y    = nc.variables['y'][:]
-    uvel = nc.variables['uvelbase'][t].T
-    vvel = nc.variables['vvelbase'][t].T
-    cbase= nc.variables['cbase'][t].T
-    temp = nc.variables['temppabase'][t].T
-    thk  = nc.variables['thk'][t].T
+    uvel = _extract(nc, 'uvelbase', t)
+    vvel = _extract(nc, 'vvelbase', t)
+    cbase= _extract(nc, 'cbase', t)
+    temp = _extract(nc, 'temppabase', t)
+    thk  = _extract(nc, 'thk', t)
     temp = np.ma.masked_where(thk < 1, temp)
     cbase= np.ma.masked_where(cbase < 1, cbase)
 
