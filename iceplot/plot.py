@@ -84,20 +84,48 @@ def surfvelimage(nc, t=0, **kwargs):
 
 ### Contour mapping functions ###
 
-## Not used yet
-#def _contours(*args, **kwargs):
-#    """Wrap :func:`~matplotlib.pyplot.contour` and :func:`~matplotlib.pyplot.contours` in a single function"""
-#    if 'fcolors' in kwargs:
-#      mplt.contourf(*args, **kwargs)
-#    if 'linewidths' in kwargs:
-#      mplt.contour(*args, **kwargs)
+def _contours(*args, **kwargs):
+    """Wrap :func:`~matplotlib.pyplot.contour` and :func:`~matplotlib.pyplot.contours` in a single function."""
+
+    # pop out all special arguments
+    colors     = kwargs.pop('colors', None)
+    cmap       = kwargs.pop('cmap', None)
+    linecolors = kwargs.pop('linecolors', None)
+    linecmap   = kwargs.pop('linecmap', None)
+    linewidths = kwargs.pop('linewidths', None)
+    linestyles = kwargs.pop('linestyles', None)
+
+    # check for filled and lined contours arguments
+    has_fill_args = any((colors, cmap))
+    has_line_args = any((linecolors, linecmap, linewidths, linestyles))
+
+    # plot filled contours
+    cf = None
+    if has_fill_args or not has_line_args:
+      cf = mplt.contourf(*args,
+        cmap   = cmap,
+        colors = colors,
+        **kwargs)
+
+    # plot lined contours
+    cl = None
+    if has_line_args or not has_fill_args:
+      cl = mplt.contour(*args,
+        colors     = linecolors,
+        cmap       = linecmap,
+        linewidths = linewidths,
+        linestyles = linestyles,
+        **kwargs)
+
+    # return filled or lined contour set
+    return cf or cl
 
 def icemargincontour(nc, t=0, **kwargs):
     """Draw a contour along the ice margin."""
     thk = _extract(nc, 'thk', t)
-    return mplt.contour(thk,
-      levels     = [kwargs.pop('level', 1)],
-      colors     = [kwargs.pop('color', 'black')],
+    return _contours(thk,
+      levels     = [kwargs.pop('level', 1), np.inf],
+      linecolors = kwargs.pop('linecolors', 'black'),
       **kwargs)
 
 def surftopocontour(nc, t=0, **kwargs):
@@ -105,10 +133,24 @@ def surftopocontour(nc, t=0, **kwargs):
     thk   = _extract(nc, 'thk', t)
     usurf = _extract(nc, 'usurf', t)
     usurf = np.ma.masked_where(thk < 1, usurf)
-    return mplt.contour(usurf,
+    return _contours(usurf,
       levels     = kwargs.pop('levels', range(1000, 5000, 1000)),
-      colors     = kwargs.pop('colors', 'black'),
+      linecolors = kwargs.pop('linecolors', 'black'),
       linewidths = kwargs.pop('linewidths', 0.5))
+
+def bedtempcontour(nc, t=0, **kwargs):
+    """Draw pressure-adjusted bed temperature contours"""
+
+    thk   = _extract(nc, 'thk', t)
+    temp  = _extract(nc, 'temppabase', t)
+    temp  = np.ma.masked_where(thk < 1, temp)
+    return _contours(temp,
+      levels     = kwargs.pop('levels', [-10, -8, -6, -4, -2, -1e-6]),
+      cmap       = kwargs.pop('cmap', mplt.cm.Blues_r),
+      extend     = kwargs.pop('extend', 'both'),
+      linewidths = kwargs.pop('linewidths', 0.2),
+      linecolors = kwargs.pop('linecolors', 'black'),
+      linestyles = kwargs.pop('linestyles', 'solid'))
 
 ### Composite mapping functions ###
 
@@ -128,7 +170,7 @@ def icemap(nc, t=0, **kwargs):
     # draw surface topography contours
     surftopocontour(nc, t,
       **{kw: kwargs['surftopo_'+kw]
-        for kw in ('levels', 'colors') if 'surftopo_'+kw in kwargs})
+        for kw in ('levels', 'linecolors') if 'surftopo_'+kw in kwargs})
 
     # draw ice margin contour
     icemargincontour(nc, t)
@@ -136,36 +178,19 @@ def icemap(nc, t=0, **kwargs):
     # return surface velocity image
     return im
 
-### TODO: To be developped functions ###
-
-def bedtempmap(nc, t=0):
+def bedtempmap(nc, t=0, **kwargs):
     """Draw basal pressure-adjusted temperature map"""
 
-    # extract variables
-    temp  = _extract(nc, 'temppabase', t)
-    thk   = _extract(nc, 'thk', t)
-    temp  = np.ma.masked_where(thk < 1, temp)
+    # draw bed temperature contour
+    cs = bedtempcontour(nc, t, **kwargs)
 
-    # draw basal temperature contours
-    levs = [-10, -8, -6, -4, -2, -1e-3, 0]
-    cs = mplt.contourf(temp,
-      levels = levs,
-      cmap   = mplt.cm.Blues_r,
-      extend = 'min')
-    mplt.contour(temp,
-      levels = levs,
-      colors = 'white',
-      linewidths = 0.2,
-      linestyles = 'solid')
+    # draw ice margin contour
+    icemargincontour(nc, t)
 
-    # draw ice outline
-    mplt.contour(thk,
-      levels     = [1, 5000],
-      colors     = 'black',
-      linewidths = 1)
-
-    # return contour set for colormaps
+    # return bed temperature contours
     return cs
+
+### TODO: To be developped functions ###
 
 def bedvelmap(nc, t=0):
     """Draw basal velocity map"""
