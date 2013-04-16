@@ -140,7 +140,6 @@ def surftopocontour(nc, t=0, **kwargs):
 
 def bedtempcontour(nc, t=0, **kwargs):
     """Draw pressure-adjusted bed temperature contours"""
-
     thk   = _extract(nc, 'thk', t)
     temp  = _extract(nc, 'temppabase', t)
     temp  = np.ma.masked_where(thk < 1, temp)
@@ -150,7 +149,22 @@ def bedtempcontour(nc, t=0, **kwargs):
       extend     = kwargs.pop('extend', 'both'),
       linewidths = kwargs.pop('linewidths', 0.2),
       linecolors = kwargs.pop('linecolors', 'black'),
-      linestyles = kwargs.pop('linestyles', 'solid'))
+      linestyles = kwargs.pop('linestyles', 'solid'),
+      **kwargs)
+
+### Quiver mapping functions ###
+
+def bedvelquiver(nc, t=0):
+    """Draw basal velocity quiver"""
+    uvel  = _extract(nc, 'uvelbase', t)
+    vvel  = _extract(nc, 'vvelbase', t)
+    cbase = _extract(nc, 'cbase', t)
+    uvel  = np.sign(uvel)*np.log(1+np.abs(uvel)/100)
+    vvel  = np.sign(vvel)*np.log(1+np.abs(vvel)/100)
+    cbase = np.ma.masked_less(cbase, 1)
+    return mplt.quiver(uvel, vvel, cbase,
+      cmap = icm.velocity,
+      norm = mcolors.LogNorm(10, 10000))
 
 ### Composite mapping functions ###
 
@@ -190,41 +204,18 @@ def bedtempmap(nc, t=0, **kwargs):
     # return bed temperature contours
     return cs
 
-### TODO: To be developped functions ###
-
 def bedvelmap(nc, t=0):
     """Draw basal velocity map"""
 
-    # extract variables
-    x    = nc.variables['x'][:]
-    y    = nc.variables['y'][:]
-    uvel = _extract(nc, 'uvelbase', t)
-    vvel = _extract(nc, 'vvelbase', t)
-    cbase= _extract(nc, 'cbase', t)
-    temp = _extract(nc, 'temppabase', t)
-    thk  = _extract(nc, 'thk', t)
-    temp = np.ma.masked_where(thk < 1, temp)
-    cbase= np.ma.masked_where(cbase < 1, cbase)
+    # draw bed temperature contour
+    bedtempcontour(nc, t)
 
-    uvel = np.sign(uvel)*np.log(1+np.abs(uvel)/100)
-    vvel = np.sign(vvel)*np.log(1+np.abs(vvel)/100)
+    # draw bed velocity quiver
+    qv = bedvelquiver(nc, t)
 
-    # draw frozen bed areas
-    mplt.contourf(temp,
-      colors = '0.75',
-      levels = [-1e3, -1e-3])
+    # draw ice margin contour
+    icemargincontour(nc, t)
 
-    # draw streamplot
-    ss = mplt.quiver(uvel, vvel, cbase,
-      cmap = icm.velocity,
-      norm = LogNorm(1, 3000))
-
-    # draw ice outline
-    mplt.contour(thk,
-      levels     = [1, 5000],
-      colors     = 'black',
-      linewidths = 1)
-
-    # return stream plot set
-    return ss
+    # return bed velocity quiver
+    return qv
 
