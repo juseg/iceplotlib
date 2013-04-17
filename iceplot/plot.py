@@ -51,7 +51,7 @@ def _extract(nc, varname, t):
 def bedtopoimage(nc, t=0, **kwargs):
     """Draw bed topography."""
     topo = _extract(nc, 'topg', t)
-    return mplt.imshow(topg,
+    return mplt.imshow(topo,
       cmap = kwargs.pop('cmap', icm.topo),
       norm = kwargs.pop('norm', mcolors.Normalize(-6000,6000)),
       **kwargs)
@@ -59,7 +59,7 @@ def bedtopoimage(nc, t=0, **kwargs):
 def surftopoimage(nc, t=0, **kwargs):
     """Draw ice surface topography."""
     topo = _extract(nc, 'usurf', t)
-    return mplt.imshow(topg,
+    return mplt.imshow(topo,
       cmap = kwargs.pop('cmap', icm.land_topo),
       norm = kwargs.pop('norm', mcolors.Normalize(0,6000)),
       **kwargs)
