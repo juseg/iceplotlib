@@ -27,6 +27,4 @@ def automatize(funcname, clabel=None):
     return autofunc
 
 icemap     = automatize('icemap',     'ice surface velocity (m/yr)')
-bedtempmap = automatize('bedtempmap', 'pressure-adjusted bed temperature (K)')
-bedvelmap  = automatize('bedvelmap')
 

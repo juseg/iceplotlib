@@ -13,18 +13,18 @@ from iceplot import figure as ifig
 ### Figure functions ###
 
 def gridfigure(mapsize, nrows_ncols, **kwargs):
-		"""Create a new figure and return a pismplot.figure.GridFigure instance"""
-		return mplt.figure(FigureClass=ifig.GridFigure,
+    """Create a new figure and return an :class:iceplot.figure.GridFigure instance"""
+    return mplt.figure(FigureClass=ifig.GridFigure,
       mapsize=mapsize, nrows_ncols=nrows_ncols, **kwargs)
 
 def simplefigure(mapsize, **kwargs):
-		"""Create a new figure and return a pismplot.figure.SimpleFigure instance"""
-		return mplt.figure(FigureClass=ifig.SimpleFigure,
+    """Create a new figure and return a :class:iceplot.figure.SimpleFigure instance"""
+    return mplt.figure(FigureClass=ifig.SimpleFigure,
       mapsize=mapsize, **kwargs)
 
 def doubleinlinefigure(mapsize, **kwargs):
-		"""Create a new figure and return a pismplot.figure.DoubleInlineFigure instance"""
-		return mplt.figure(FigureClass=ifig.DoubleInlineFigure,
+    """Create a new figure and return a :class:iceplot.figure.DoubleInlineFigure instance"""
+    return mplt.figure(FigureClass=ifig.DoubleInlineFigure,
       mapsize=mapsize, **kwargs)
 
 ### Data extraction ###
@@ -50,10 +50,18 @@ def _extract(nc, varname, t):
 
 def bedtopoimage(nc, t=0, **kwargs):
     """Draw bed topography."""
-    topg  = _extract(nc, 'topg', t)
+    topo = _extract(nc, 'topg', t)
     return mplt.imshow(topg,
       cmap = kwargs.pop('cmap', icm.topo),
       norm = kwargs.pop('norm', mcolors.Normalize(-6000,6000)),
+      **kwargs)
+
+def surftopoimage(nc, t=0, **kwargs):
+    """Draw ice surface topography."""
+    topo = _extract(nc, 'usurf', t)
+    return mplt.imshow(topg,
+      cmap = kwargs.pop('cmap', icm.land_topo),
+      norm = kwargs.pop('norm', mcolors.Normalize(0,6000)),
       **kwargs)
 
 def airtempimage(nc, t=0, **kwargs):
@@ -154,17 +162,30 @@ def bedtempcontour(nc, t=0, **kwargs):
 
 ### Quiver mapping functions ###
 
-def bedvelquiver(nc, t=0):
+def _icevelquiver(nc, t=0, surface='surf', **kwargs):
+    """Draw ice velocity quiver"""
+    thk = _extract(nc, 'thk', t)
+    u = _extract(nc, 'uvel'+surf, t)
+    v = _extract(nc, 'vvel'+surf, t)
+    c = _extract(nc, 'c'+surf, t)
+    scale = kwargs.pop('scale', 100)
+    u = np.sign(u)*np.log(1+np.abs(u)/scale)
+    v = np.sign(v)*np.log(1+np.abs(v)/scale)
+    u = np.ma.masked_where(thk < 1, u)
+    v = np.ma.masked_where(thk < 1, v)
+    return mplt.quiver(u, v, c,
+      scale = scale,
+      cmap = kwargs.pop('cmap', icm.velocity),
+      norm = kwargs.pop('norm', mcolors.LogNorm(10, 10000)),
+      **kwargs)
+
+def bedvelquiver(nc, t=0, **kwargs):
     """Draw basal velocity quiver"""
-    uvel  = _extract(nc, 'uvelbase', t)
-    vvel  = _extract(nc, 'vvelbase', t)
-    cbase = _extract(nc, 'cbase', t)
-    uvel  = np.sign(uvel)*np.log(1+np.abs(uvel)/100)
-    vvel  = np.sign(vvel)*np.log(1+np.abs(vvel)/100)
-    cbase = np.ma.masked_less(cbase, 1)
-    return mplt.quiver(uvel, vvel, cbase,
-      cmap = icm.velocity,
-      norm = mcolors.LogNorm(10, 10000))
+    return _icevelquiver(nc, t, 'base', **kwargs)
+
+def surfvelquiver(nc, t=0, **kwargs):
+    """Draw basal velocity quiver"""
+    return _icevelquiver(nc, t, 'surf', **kwargs)
 
 ### Composite mapping functions ###
 
@@ -191,31 +212,4 @@ def icemap(nc, t=0, **kwargs):
 
     # return surface velocity image
     return im
-
-def bedtempmap(nc, t=0, **kwargs):
-    """Draw basal pressure-adjusted temperature map"""
-
-    # draw bed temperature contour
-    cs = bedtempcontour(nc, t, **kwargs)
-
-    # draw ice margin contour
-    icemargincontour(nc, t)
-
-    # return bed temperature contours
-    return cs
-
-def bedvelmap(nc, t=0):
-    """Draw basal velocity map"""
-
-    # draw bed temperature contour
-    bedtempcontour(nc, t)
-
-    # draw bed velocity quiver
-    qv = bedvelquiver(nc, t)
-
-    # draw ice margin contour
-    icemargincontour(nc, t)
-
-    # return bed velocity quiver
-    return qv
 

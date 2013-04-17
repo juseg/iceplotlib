@@ -39,6 +39,4 @@ def animate(funcname):
     return animfunc
 
 iceanim     = animate('icemap')
-bedtempanim = animate('bedtempmap')
-bedvelanim  = animate('bedvelmap')
 
