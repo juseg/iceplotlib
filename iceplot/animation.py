@@ -33,10 +33,11 @@ def animate(funcname):
       def update(i):
         plt.cla()
         getattr(iplt, funcname)(nc, i)
-      getattr(aplt, funcname)(mapsize, nc, 0)
+      t = t or range(len(nc.dimensions['time']))
+      getattr(aplt, funcname)(mapsize, nc, t[0])
       return FuncAnimation(plt.gcf(), update, t)
 
     return animfunc
 
-iceanim     = animate('icemap')
+iceanim = animate('icemap')
 
