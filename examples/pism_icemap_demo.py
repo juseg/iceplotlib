@@ -1,21 +1,17 @@
 """
-Draws the module's canonical icemap and add a colorbar.
+Draw the module's canonical icemap.
 """
 
-from matplotlib import pyplot as plt
 from netCDF4 import Dataset
-from iceplot import plot as pplt
+from matplotlib import pyplot as mplt
+from iceplot import autoplot as aplt
 
 # load data
-nc = Dataset('extra.nc')
+nc = Dataset('pism_plot_sample.nc')
 
 # plot
-im = pplt.icemap(nc, t=-1)
+im = aplt.icemap((60, 120), nc)
 
-# add colorbar
-cb = plt.colorbar(im)
-cb.set_label('ice surface velocity (m/yr)')
-
-# save
-plt.show()
+# show
+mplt.show()
 
