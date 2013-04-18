@@ -162,7 +162,7 @@ def bedtempcontour(nc, t=0, **kwargs):
 
 ### Quiver mapping functions ###
 
-def _icevelquiver(nc, t=0, surface='surf', **kwargs):
+def _icevelquiver(nc, t=0, surf='surf', **kwargs):
     """Draw ice velocity quiver"""
     thk = _extract(nc, 'thk', t)
     u = _extract(nc, 'uvel'+surf, t)
