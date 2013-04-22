@@ -3,56 +3,101 @@
 Provide an automatic plotting interface to plot entire figures with title and colorbar.
 """
 
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as mplt
 from iceplot import plot as iplt
 
-def _automatize(funcname, clabel=None):
-    """Transform a plotting function into an autoplotting function"""
+def _init_figure(nc, cbar_mode=None):
+    """Prepare figure and return axes for plot"""
+    x = len(nc.dimensions['x'])
+    y = len(nc.dimensions['y'])
+    mapsize = (y*0.4, x*0.4)
+    fig = iplt.simplefigure(mapsize, cbar_mode=cbar_mode)
+    return mplt.axes(fig.grid[0])
 
-    def autofunc(nc, t=0, **kwargs):
+### Image mapping functions ###
 
-      # get mapsize from nc file
-      x = len(nc.dimensions['x'])
-      y = len(nc.dimensions['y'])
-      mapsize = (y*0.4, x*0.4)
+def bedtopoimage(nc, t=0, **kwargs):
+    ax = _init_figure(nc, cbar_mode='single')
+    im = iplt.bedtopoimage(nc, t, **kwargs)
+    cb = mplt.colorbar(im, ax.cax, format='%g')
+    cb.set_label('bed topography (m)')
 
-      # prepare figure
-      cbar_mode = 'single' if clabel else None
-      fig = iplt.simplefigure(mapsize, cbar_mode=cbar_mode)
-      ax  = fig.grid[0]
+def surftopoimage(nc, t=0, **kwargs):
+    ax = _init_figure(nc, cbar_mode='single')
+    im = iplt.surftopoimage(nc, t, **kwargs)
+    cb = mplt.colorbar(im, ax.cax, format='%g')
+    cb.set_label('surface topography (m)')
 
-      # plot
-      plt.sca(ax)
-      sm = getattr(iplt, funcname)(nc, t, **kwargs)
+def airtempimage(nc, t=0, **kwargs):
+    ax = _init_figure(nc, cbar_mode='single')
+    im = iplt.airtempimage(nc, t, **kwargs)
+    cb = mplt.colorbar(im, ax.cax, format='%g')
+    cb.set_label('air temperature (degC)')
 
-      # add colorbar
-      if clabel is not None:
-        cb = plt.colorbar(sm,ax.cax, format='%g')
-        cb.set_label(clabel)
+def precipimage(nc, t=0, **kwargs):
+    ax = _init_figure(nc, cbar_mode='single')
+    im = iplt.precipimage(nc, t, **kwargs)
+    cb = mplt.colorbar(im, ax.cax, format='%g')
+    cb.set_label('precipitation rate (m/yr)')
 
-    autofunc.__doc__ = getattr(iplt, funcname).__doc__
+def surfvelimage(nc, t=0, **kwargs):
+    ax = _init_figure(nc, cbar_mode='single')
+    im = iplt.surfvelimage(nc, t, **kwargs)
+    cb = mplt.colorbar(im, ax.cax, format='%g')
+    cb.set_label('ice surface velocity (m/yr)')
 
-    return autofunc
+bedtopoimage.__doc__  = iplt.bedtopoimage.__doc__
+surftopoimage.__doc__ = iplt.surftopoimage.__doc__
+airtempimage.__doc__  = iplt.airtempimage.__doc__
+precipimage.__doc__   = iplt.precipimage.__doc__
+surfvelimage.__doc__  = iplt.surfvelimage.__doc__
 
-_bedtoponame  = 'bed ropography (m)'
-_surftoponame = 'surface topography (m)'
-_airtempname  =u'air temperature (degC)'
-_precname     = 'precipitation rate (m/yr)'
-_bedtempname  = 'pressure-adjusted basal temperature (K)'
-_bedvelname   = 'ice basal velocity (m/ yr)'
-_surfvelname  = 'ice surface velocity (m/ yr)'
+### Contour mapping functions ###
 
-bedtopoimage    = _automatize('bedtopoimage',  _bedtoponame)
-surftopoimage   = _automatize('surftopoimage', _surftoponame)
-airtempimage    = _automatize('airtempimage',  _airtempname)
-precipimage     = _automatize('precipimage',   _precname)
-surfvelimage    = _automatize('surfvelimage',  _surfvelname)
+def icemargincontour(nc, t=0, **kwargs):
+    ax = _init_figure(nc, cbar_mode=None)
+    im = iplt.icemargincontour(nc, t, **kwargs)
 
-icemargincontour= _automatize('icemargincontour')
-surftopocontour = _automatize('surftopocontour', _surftoponame)
-bedtempcontour  = _automatize('bedtempcontour', _bedtempname)
+def surftopocontour(nc, t=0, **kwargs):
+    ax = _init_figure(nc, cbar_mode='single')
+    im = iplt.surftopocontour(nc, t, **kwargs)
+    cb = mplt.colorbar(im, ax.cax, format='%g')
+    cb.set_label('surface topography (m)')
 
-bedvelquiver    = _automatize('bedvelquiver',   _bedvelname)
-surfvelquiver   = _automatize('surfvelquiver',  _surfvelname)
-icemap          = _automatize('icemap',         _surfvelname)
+def bedtempcontour(nc, t=0, **kwargs):
+    ax = _init_figure(nc, cbar_mode='single')
+    im = iplt.bedtempcontour(nc, t, **kwargs)
+    cb = mplt.colorbar(im, ax.cax, format='%g')
+    cb.set_label('pressure-adjusted basal temperature (K)')
+
+icemargincontour.__doc__ = iplt.icemargincontour.__doc__
+surftopocontour.__doc__  = iplt.surftopocontour.__doc__
+bedtempcontour.__doc__   = iplt.bedtempcontour.__doc__
+
+### Quiver mapping functions ###
+
+def bedvelquiver(nc, t=0, **kwargs):
+    ax = _init_figure(nc, cbar_mode='single')
+    im = iplt.bedvelquiver(nc, t, **kwargs)
+    cb = mplt.colorbar(im, ax.cax, format='%g')
+    cb.set_label('ice basal velocity (m/yr)')
+
+def surfvelquiver(nc, t=0, **kwargs):
+    ax = _init_figure(nc, cbar_mode='single')
+    im = iplt.surfvelquiver(nc, t, **kwargs)
+    cb = mplt.colorbar(im, ax.cax, format='%g')
+    cb.set_label('ice surface velocity (m/yr)')
+
+bedvelquiver.__doc__  = iplt.bedvelquiver.__doc__
+surfvelquiver.__doc__ = iplt.surfvelquiver.__doc__
+
+### Composite mapping functions ###
+
+def icemap(nc, t=0, **kwargs):
+    ax = _init_figure(nc, cbar_mode='single')
+    im = iplt.icemap(nc, t, **kwargs)
+    cb = mplt.colorbar(im, ax.cax, format='%g')
+    cb.set_label('ice surface velocity (m/yr)')
+
+icemap.__doc__ = iplt.icemap.__doc__
 
