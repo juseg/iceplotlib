@@ -10,7 +10,7 @@ from iceplot import autoplot as aplt
 nc = Dataset('pism_plot_sample.nc')
 
 # plot
-im = aplt.icemap((60, 120), nc)
+im = aplt.icemap(nc)
 
 # show
 mplt.show()
