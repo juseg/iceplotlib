@@ -64,6 +64,16 @@ def surftopoimage(nc, t=0, **kwargs):
       norm = kwargs.pop('norm', mcolors.Normalize(0,6000)),
       **kwargs)
 
+def bedtempimage(nc, t=0, **kwargs):
+    """Draw pressure-adjusted bed temperature."""
+    thk   = _extract(nc, 'thk', t)
+    temp  = _extract(nc, 'temppabase', t)
+    temp  = np.ma.masked_where(thk < 1, temp)
+    return mplt.imshow(temp,
+      cmap = kwargs.pop('cmap', mplt.cm.Blues_r),
+      norm = kwargs.pop('norm', mcolors.Normalize(-10, 0)),
+      **kwargs)
+
 def airtempimage(nc, t=0, **kwargs):
     """Draw near-surface air temperature."""
     temp = _extract(nc, 'air_temp', t)
@@ -80,15 +90,23 @@ def precipimage(nc, t=0, **kwargs):
       norm = kwargs.pop('norm', mcolors.LogNorm(0.1,10)),
       **kwargs)
 
-def surfvelimage(nc, t=0, **kwargs):
-    """Draw surface velocity."""
-    thk   = _extract(nc, 'thk', t)
-    csurf = _extract(nc, 'csurf', t)
-    csurf = np.ma.masked_where(thk < 1, csurf)
-    return mplt.imshow(csurf,
+def _icevelimage(nc, t=0, surf='surf', **kwargs):
+    """Draw ice velocity."""
+    thk = _extract(nc, 'thk', t)
+    c   = _extract(nc, 'c'+surf, t)
+    c   = np.ma.masked_where(thk < 1, c)
+    return mplt.imshow(c,
       cmap = kwargs.pop('cmap', icm.velocity),
       norm = kwargs.pop('norm', mcolors.LogNorm(10, 10000)),
       **kwargs)
+
+def bedvelimage(nc, t=0, **kwargs):
+    """Draw basal velocity."""
+    return _icevelimage(nc, t, 'base', **kwargs)
+
+def surfvelimage(nc, t=0, **kwargs):
+    """Draw surface velocity."""
+    return _icevelimage(nc, t, 'surf', **kwargs)
 
 ### Contour mapping functions ###
 
@@ -144,10 +162,11 @@ def surftopocontour(nc, t=0, **kwargs):
     return _contours(usurf,
       levels     = kwargs.pop('levels', range(1000, 5000, 1000)),
       linecolors = kwargs.pop('linecolors', 'black'),
-      linewidths = kwargs.pop('linewidths', 0.5))
+      linewidths = kwargs.pop('linewidths', 0.5),
+      **kwargs)
 
 def bedtempcontour(nc, t=0, **kwargs):
-    """Draw pressure-adjusted bed temperature contours"""
+    """Draw pressure-adjusted bed temperature contours."""
     thk   = _extract(nc, 'thk', t)
     temp  = _extract(nc, 'temppabase', t)
     temp  = np.ma.masked_where(thk < 1, temp)
@@ -159,6 +178,50 @@ def bedtempcontour(nc, t=0, **kwargs):
       linecolors = kwargs.pop('linecolors', 'black'),
       linestyles = kwargs.pop('linestyles', 'solid'),
       **kwargs)
+
+def airtempcontour(nc, t=0, **kwargs):
+    """Draw near-surface air temperature contours."""
+    temp = _extract(nc, 'air_temp', t) - 273.15
+    return _contours(temp,
+      levels     = kwargs.pop('levels', range(-30, 31, 5)),
+      cmap       = kwargs.pop('cmap', mplt.cm.Spectral_r),
+      norm       = kwargs.pop('norm', mcolors.Normalize(-30,30)),
+      linewidths = kwargs.pop('linewidths', 0.2),
+      linecolors = kwargs.pop('linecolors', 'black'),
+      linestyles = kwargs.pop('linestyles', 'solid'),
+      **kwargs)
+
+def precipcontour(nc, t=0, **kwargs):
+    """Draw precipitation rate contours."""
+    prec = _extract(nc, 'precipitation', t)
+    return _contours(prec,
+      levels     = kwargs.pop('levels', [0.1, 0.2, 0.5, 1, 2, 5, 10]),
+      cmap       = kwargs.pop('cmap', mplt.cm.YlGnBu),
+      norm       = kwargs.pop('norm', mcolors.LogNorm(0.1,10)),
+      linewidths = kwargs.pop('linewidths', 0.2),
+      linecolors = kwargs.pop('linecolors', 'black'),
+      **kwargs)
+
+def _icevelcontour(nc, t=0, surf='surf', **kwargs):
+    """Draw ice velocity contours."""
+    thk = _extract(nc, 'thk', t)
+    c   = _extract(nc, 'c'+surf, t)
+    c   = np.ma.masked_where(thk < 1, c)
+    return _contours(c,
+      levels     = kwargs.pop('levels', [10,30,100,300,1000,3000,10000]),
+      cmap       = kwargs.pop('cmap', icm.velocity),
+      norm       = kwargs.pop('norm', mcolors.LogNorm(10, 10000)),
+      linewidths = kwargs.pop('linewidths', 0.2),
+      linecolors = kwargs.pop('linecolors', 'black'),
+      **kwargs)
+
+def bedvelcontour(nc, t=0, **kwargs):
+    """Draw basal velocity contours."""
+    return _icevelcontour(nc, t, 'base', **kwargs)
+
+def surfvelcontour(nc, t=0, **kwargs):
+    """Draw surface velocity contours."""
+    return _icevelcontour(nc, t, 'surf', **kwargs)
 
 ### Quiver mapping functions ###
 
