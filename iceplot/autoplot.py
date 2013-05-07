@@ -28,9 +28,9 @@ def surftopoimage(nc, t=0, **kwargs):
     cb = mplt.colorbar(im, ax.cax, format='%g')
     cb.set_label('surface topography (m)')
 
-def bedtempimage(nc, t=0, **kwargs):
+def basetempimage(nc, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='single')
-    im = iplt.bedtempimage(nc, t, **kwargs)
+    im = iplt.basetempimage(nc, t, **kwargs)
     cb = mplt.colorbar(im, ax.cax, format='%g')
     cb.set_label('pressure-adjusted basal temperature (degC)')
 
@@ -46,9 +46,9 @@ def precipimage(nc, t=0, **kwargs):
     cb = mplt.colorbar(im, ax.cax, format='%g')
     cb.set_label('precipitation rate (m/yr)')
 
-def bedvelimage(nc, t=0, **kwargs):
+def basevelimage(nc, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='single')
-    im = iplt.bedvelimage(nc, t, **kwargs)
+    im = iplt.basevelimage(nc, t, **kwargs)
     cb = mplt.colorbar(im, ax.cax, format='%g')
     cb.set_label('ice basal velocity (m/yr)')
 
@@ -60,10 +60,10 @@ def surfvelimage(nc, t=0, **kwargs):
 
 bedtopoimage.__doc__  = iplt.bedtopoimage.__doc__
 surftopoimage.__doc__ = iplt.surftopoimage.__doc__
-bedtempimage.__doc__  = iplt.bedtempimage.__doc__
+basetempimage.__doc__ = iplt.basetempimage.__doc__
 airtempimage.__doc__  = iplt.airtempimage.__doc__
 precipimage.__doc__   = iplt.precipimage.__doc__
-bedvelimage.__doc__   = iplt.bedvelimage.__doc__
+basevelimage.__doc__  = iplt.basevelimage.__doc__
 surfvelimage.__doc__  = iplt.surfvelimage.__doc__
 
 ### Contour mapping functions ###
@@ -78,9 +78,9 @@ def surftopocontour(nc, t=0, **kwargs):
     cb = mplt.colorbar(im, ax.cax, format='%g')
     cb.set_label('surface topography (m)')
 
-def bedtempcontour(nc, t=0, **kwargs):
+def basetempcontour(nc, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='single')
-    im = iplt.bedtempcontour(nc, t, **kwargs)
+    im = iplt.basetempcontour(nc, t, **kwargs)
     cb = mplt.colorbar(im, ax.cax, format='%g')
     cb.set_label('pressure-adjusted basal temperature (degC)')
 
@@ -96,9 +96,9 @@ def precipcontour(nc, t=0, **kwargs):
     cb = mplt.colorbar(im, ax.cax, format='%g')
     cb.set_label('precipitation rate (m/yr)')
 
-def bedvelcontour(nc, t=0, **kwargs):
+def basevelcontour(nc, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='single')
-    im = iplt.bedvelcontour(nc, t, **kwargs)
+    im = iplt.basevelcontour(nc, t, **kwargs)
     cb = mplt.colorbar(im, ax.cax, format='%g')
     cb.set_label('ice basal velocity (m/yr)')
 
@@ -110,17 +110,17 @@ def surfvelcontour(nc, t=0, **kwargs):
 
 icemargincontour.__doc__ = iplt.icemargincontour.__doc__
 surftopocontour.__doc__  = iplt.surftopocontour.__doc__
-bedtempcontour.__doc__   = iplt.bedtempcontour.__doc__
+basetempcontour.__doc__  = iplt.basetempcontour.__doc__
 airtempcontour.__doc__   = iplt.airtempcontour.__doc__
 precipcontour.__doc__    = iplt.precipcontour.__doc__
-bedvelcontour.__doc__    = iplt.bedvelcontour.__doc__
+basevelcontour.__doc__    = iplt.basevelcontour.__doc__
 surfvelcontour.__doc__   = iplt.surfvelcontour.__doc__
 
 ### Quiver mapping functions ###
 
-def bedvelquiver(nc, t=0, **kwargs):
+def basevelquiver(nc, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='single')
-    im = iplt.bedvelquiver(nc, t, **kwargs)
+    im = iplt.basevelquiver(nc, t, **kwargs)
     cb = mplt.colorbar(im, ax.cax, format='%g')
     cb.set_label('ice basal velocity (m/yr)')
 
@@ -130,7 +130,7 @@ def surfvelquiver(nc, t=0, **kwargs):
     cb = mplt.colorbar(im, ax.cax, format='%g')
     cb.set_label('ice surface velocity (m/yr)')
 
-bedvelquiver.__doc__  = iplt.bedvelquiver.__doc__
+basevelquiver.__doc__ = iplt.basevelquiver.__doc__
 surfvelquiver.__doc__ = iplt.surfvelquiver.__doc__
 
 ### Composite mapping functions ###

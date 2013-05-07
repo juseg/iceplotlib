@@ -49,7 +49,7 @@ def _extract(nc, varname, t):
 ### Image mapping functions ###
 
 def bedtopoimage(nc, t=0, **kwargs):
-    """Draw bed topography."""
+    """Draw bedrock topography."""
     topo = _extract(nc, 'topg', t)
     return mplt.imshow(topo,
       cmap = kwargs.pop('cmap', icm.topo),
@@ -64,8 +64,8 @@ def surftopoimage(nc, t=0, **kwargs):
       norm = kwargs.pop('norm', mcolors.Normalize(0,6000)),
       **kwargs)
 
-def bedtempimage(nc, t=0, **kwargs):
-    """Draw pressure-adjusted bed temperature."""
+def basetempimage(nc, t=0, **kwargs):
+    """Draw pressure-adjusted basal temperature."""
     thk   = _extract(nc, 'thk', t)
     temp  = _extract(nc, 'temppabase', t)
     temp  = np.ma.masked_where(thk < 1, temp)
@@ -100,7 +100,7 @@ def _icevelimage(nc, t=0, surf='surf', **kwargs):
       norm = kwargs.pop('norm', mcolors.LogNorm(10, 10000)),
       **kwargs)
 
-def bedvelimage(nc, t=0, **kwargs):
+def basevelimage(nc, t=0, **kwargs):
     """Draw basal velocity."""
     return _icevelimage(nc, t, 'base', **kwargs)
 
@@ -165,7 +165,7 @@ def surftopocontour(nc, t=0, **kwargs):
       linewidths = kwargs.pop('linewidths', 0.5),
       **kwargs)
 
-def bedtempcontour(nc, t=0, **kwargs):
+def basetempcontour(nc, t=0, **kwargs):
     """Draw pressure-adjusted bed temperature contours."""
     thk   = _extract(nc, 'thk', t)
     temp  = _extract(nc, 'temppabase', t)
@@ -215,7 +215,7 @@ def _icevelcontour(nc, t=0, surf='surf', **kwargs):
       linecolors = kwargs.pop('linecolors', 'black'),
       **kwargs)
 
-def bedvelcontour(nc, t=0, **kwargs):
+def basevelcontour(nc, t=0, **kwargs):
     """Draw basal velocity contours."""
     return _icevelcontour(nc, t, 'base', **kwargs)
 
@@ -242,7 +242,7 @@ def _icevelquiver(nc, t=0, surf='surf', **kwargs):
       norm = kwargs.pop('norm', mcolors.LogNorm(10, 10000)),
       **kwargs)
 
-def bedvelquiver(nc, t=0, **kwargs):
+def basevelquiver(nc, t=0, **kwargs):
     """Draw basal velocity quiver"""
     return _icevelquiver(nc, t, 'base', **kwargs)
 

@@ -11,7 +11,7 @@ from iceplot import autoplot as aplt
 nc = Dataset('pism_plot_sample.nc')
 
 # plot bed temperature contour
-aplt.bedtempcontour(nc)
+aplt.basetempcontour(nc)
 
 # add an ice margin
 iplt.icemargincontour(nc)
