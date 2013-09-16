@@ -1,4 +1,4 @@
-"""iceplot.plot
+""":mod:`iceplot.plot`
 
 Provide the actual plotting interface
 """
@@ -49,7 +49,20 @@ def _extract(nc, varname, t):
 ### Image mapping functions ###
 
 def bedtopoimage(nc, t=0, **kwargs):
-    """Draw bedrock topography."""
+    """
+    Draw bedrock topography map using :func:`matplotlib.pyplot.imshow`.
+
+    Keyword arguments:
+
+      *cmap*: [ *None* | Colormap ]
+        A :class:`matplotlib.colors.Colormap` instance. If *None*,
+        a default Wikipedia-based colormap is used.
+      *norm*: [ *None* | Normalize ]
+        A :class:`matplotlib.colors.Normalize` instance. If *None*,
+        luminance is scaled linearly between -6000 and 6000 m.
+
+    See :func:`matplotlib.pyplot.imshow` for complete documentation.
+    """
     topo = _extract(nc, 'topg', t)
     return mplt.imshow(topo,
       cmap = kwargs.pop('cmap', icm.topo),
@@ -57,7 +70,20 @@ def bedtopoimage(nc, t=0, **kwargs):
       **kwargs)
 
 def surftopoimage(nc, t=0, **kwargs):
-    """Draw ice surface topography."""
+    """
+    Draw ice surface topography map using :func:`matplotlib.pyplot.imshow`.
+
+    Keyword arguments:
+
+      *cmap*: [ *None* | Colormap ]
+        A :class:`matplotlib.colors.Colormap` instance. If *None*,
+        a default Wikipedia-based colormap is used.
+      *norm*: [ *None* | Normalize ]
+        A :class:`matplotlib.colors.Normalize` instance. If *None*,
+        luminance is scaled linearly between 0 and 6000 m.
+
+    See :func:`matplotlib.pyplot.imshow` for complete documentation.
+    """
     topo = _extract(nc, 'usurf', t)
     return mplt.imshow(topo,
       cmap = kwargs.pop('cmap', icm.land_topo),
@@ -65,7 +91,21 @@ def surftopoimage(nc, t=0, **kwargs):
       **kwargs)
 
 def basetempimage(nc, t=0, **kwargs):
-    """Draw pressure-adjusted basal temperature."""
+    """
+    Draw a map of basal temperature above melting point using
+    :func:`matplotlib.pyplot.imshow`.
+
+    Keyword arguments:
+
+      *cmap*: [ *None* | Colormap ]
+        A :class:`matplotlib.colors.Colormap` instance. If *None*,
+        :data:`matplotlib.cm.Blues_r` is used.
+      *norm*: [ *None* | Normalize ]
+        A :class:`matplotlib.colors.Normalize` instance. If *None*,
+        luminance is scaled linearly between -10 and 0 K.
+
+    See :func:`matplotlib.pyplot.imshow` for complete documentation.
+    """
     thk   = _extract(nc, 'thk', t)
     temp  = _extract(nc, 'temppabase', t)
     temp  = np.ma.masked_where(thk < 1, temp)
@@ -75,7 +115,21 @@ def basetempimage(nc, t=0, **kwargs):
       **kwargs)
 
 def airtempimage(nc, t=0, **kwargs):
-    """Draw near-surface air temperature."""
+    """
+    Draw surface air temperature map using
+    :func:`matplotlib.pyplot.imshow`.
+
+    Keyword arguments:
+
+      *cmap*: [ *None* | Colormap ]
+        A :class:`matplotlib.colors.Colormap` instance. If *None*,
+        :data:`matplotlib.cm.Spectral_r`is used.
+      *norm*: [ *None* | Normalize ]
+        A :class:`matplotlib.colors.Normalize` instance. If *None*,
+        luminance is scaled linearly between -30 and 30 degree C.
+
+    See :func:`matplotlib.pyplot.imshow` for complete documentation.
+    """
     temp = _extract(nc, 'air_temp', t)
     return mplt.imshow(temp,
       cmap = kwargs.pop('cmap', mplt.cm.Spectral_r),
@@ -83,7 +137,20 @@ def airtempimage(nc, t=0, **kwargs):
       **kwargs)
 
 def precipimage(nc, t=0, **kwargs):
-    """Draw precipitation rate."""
+    """
+    Draw precipitation rate map using :func:`matplotlib.pyplot.imshow`.
+
+    Keyword arguments:
+
+      *cmap*: [ *None* | Colormap ]
+        A :class:`matplotlib.colors.Colormap` instance. If *None*,
+        :data:`matplotlib.cm.YlGnBu` is used.
+      *norm*: [ *None* | Normalize ]
+        A :class:`matplotlib.colors.Normalize` instance. If *None*,
+        luminance is scaled logarithmically between 0.1 and 10 m yr-1.
+
+    See :func:`matplotlib.pyplot.imshow` for complete documentation.
+    """
     prec = _extract(nc, 'precipitation', t)
     return mplt.imshow(prec,
       cmap = kwargs.pop('cmap', mplt.cm.YlGnBu),
@@ -91,7 +158,7 @@ def precipimage(nc, t=0, **kwargs):
       **kwargs)
 
 def _icevelimage(nc, t=0, surf='surf', **kwargs):
-    """Draw ice velocity."""
+    """Draw ice velocity map."""
     thk = _extract(nc, 'thk', t)
     c   = _extract(nc, 'c'+surf, t)
     c   = np.ma.masked_where(thk < 1, c)
@@ -101,11 +168,37 @@ def _icevelimage(nc, t=0, surf='surf', **kwargs):
       **kwargs)
 
 def basevelimage(nc, t=0, **kwargs):
-    """Draw basal velocity."""
+    """
+    Draw basal velocity map using :func:`matplotlib.pyplot.imshow`.
+
+    Keyword arguments:
+
+      *cmap*: [ *None* | Colormap ]
+        A :class:`matplotlib.colors.Colormap` instance. If *None*,
+        a default colormap is used.
+      *norm*: [ *None* | Normalize ]
+        A :class:`matplotlib.colors.Normalize` instance. If *None*,
+        luminance is scaled logarithmically between 10 and 10,000 m yr-1.
+
+    See :func:`matplotlib.pyplot.imshow` for complete documentation.
+    """
     return _icevelimage(nc, t, 'base', **kwargs)
 
 def surfvelimage(nc, t=0, **kwargs):
-    """Draw surface velocity."""
+    """
+    Draw ice surface velocity map using :func:`matplotlib.pyplot.imshow`.
+
+    Keyword arguments:
+
+      *cmap*: [ *None* | Colormap ]
+        A :class:`matplotlib.colors.Colormap` instance. If *None*,
+        a default colormap is used.
+      *norm*: [ *None* | Normalize ]
+        A :class:`matplotlib.colors.Normalize` instance. If *None*,
+        luminance is scaled logarithmically between 10 and 10,000 m yr-1.
+
+    See :func:`matplotlib.pyplot.imshow` for complete documentation.
+    """
     return _icevelimage(nc, t, 'surf', **kwargs)
 
 ### Contour mapping functions ###
@@ -147,7 +240,21 @@ def _contours(*args, **kwargs):
     return cf or cl
 
 def icemargincontour(nc, t=0, **kwargs):
-    """Draw a contour along the ice margin."""
+    """Draw a contour along the ice margin using
+    :func:`matplotlib.pyplot.contour` and
+    :func:`matplotlib.pyplot.contourf`.
+
+    Keyword arguments:
+
+      *cmap*: [ *None* | Colormap ]
+        A :class:`matplotlib.colors.Colormap` instance. If *None*,
+        a default Wikipedia-based colormap is used.
+      *norm*: [ *None* | Normalize ]
+        A :class:`matplotlib.colors.Normalize` instance. If *None*,
+        luminance is scaled linearly between -6000 and 6000 m.
+
+    See :func:`matplotlib.pyplot.imshow` for complete documentation.
+    """
     thk = _extract(nc, 'thk', t)
     return _contours(thk,
       levels     = [kwargs.pop('level', 1), np.inf],
@@ -180,7 +287,28 @@ def basetempcontour(nc, t=0, **kwargs):
       **kwargs)
 
 def airtempcontour(nc, t=0, **kwargs):
-    """Draw near-surface air temperature contours."""
+    """Draw near-surface air temperature contours using
+    :func:`matplotlib.pyplot.contour` and
+    :func:`matplotlib.pyplot.contourf`.
+
+    Keyword arguments:
+
+      *levels*: [ *None* | list ]
+      *cmap*: [ *None* | Colormap ]
+      *norm*: [ *None* | Normalize ]
+      *linewidths*: [ *None* | number | tuple of numbers ]
+      *linecolors*: [ *None* | string | (mpl_colors) ]
+      *linestyles*: [ *None* | 'solid' | 'dashed' | 'dashdot' | 'dotted' ]
+
+      *cmap*: [ *None* | Colormap ]
+        A :class:`matplotlib.colors.Colormap` instance. If *None*,
+        a default Wikipedia-based colormap is used.
+      *norm*: [ *None* | Normalize ]
+        A :class:`matplotlib.colors.Normalize` instance. If *None*,
+        luminance is scaled linearly between -6000 and 6000 m.
+
+    See :func:`matplotlib.pyplot.imshow` for complete documentation.
+    """
     temp = _extract(nc, 'air_temp', t) - 273.15
     return _contours(temp,
       levels     = kwargs.pop('levels', range(-30, 31, 5)),
@@ -253,7 +381,12 @@ def surfvelquiver(nc, t=0, **kwargs):
 ### Composite mapping functions ###
 
 def icemap(nc, t=0, **kwargs):
-    """Draw basal topography, surface velocity and elevation contours."""
+    """Draw basal topography, surface velocity and elevation contours.
+
+    **Example:**
+
+    .. plot:: ../examples/pism_icemap_demo.py
+    """
 
     # draw bed topography
     bedtopoimage(nc, t,
