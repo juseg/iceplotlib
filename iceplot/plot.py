@@ -378,6 +378,33 @@ def surfvelquiver(nc, t=0, **kwargs):
     """Draw basal velocity quiver"""
     return _icevelquiver(nc, t, 'surf', **kwargs)
 
+### Streamplot mapping functions ###
+
+def _icevelstreamplot(nc, t=0, surf='surf', **kwargs):
+    """Draw ice velocity quiver"""
+    x = np.arange(len(nc.dimensions['x']))
+    y = np.arange(len(nc.dimensions['y']))
+    thk = _extract(nc, 'thk', t)
+    u = _extract(nc, 'uvel'+surf, t)
+    v = _extract(nc, 'vvel'+surf, t)
+    c = _extract(nc, 'c'+surf, t)
+    u = np.ma.masked_where(thk < 1, u)
+    v = np.ma.masked_where(thk < 1, v)
+    return mplt.streamplot(x, y, u, v,
+      linewidth = kwargs.pop('linewidths', 0.5),
+      color     = kwargs.pop('color', c),
+      cmap      = kwargs.pop('cmap', icm.velocity),
+      norm      = kwargs.pop('norm', mcolors.LogNorm(10, 10000)),
+      **kwargs)
+
+def basevelstreamplot(nc, t=0, **kwargs):
+    """Draw basal velocity quiver"""
+    return _icevelstreamplot(nc, t, 'base', **kwargs)
+
+def surfvelstreamplot(nc, t=0, **kwargs):
+    """Draw basal velocity quiver"""
+    return _icevelstreamplot(nc, t, 'surf', **kwargs)
+
 ### Composite mapping functions ###
 
 def icemap(nc, t=0, **kwargs):

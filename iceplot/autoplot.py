@@ -10,7 +10,7 @@ def _init_figure(nc, cbar_mode=None):
     """Prepare figure and return axes for plot"""
     x = len(nc.dimensions['x'])
     y = len(nc.dimensions['y'])
-    mapsize = (y*0.4, x*0.4)
+    mapsize = (x*0.4, y*0.4)
     fig = iplt.simplefigure(mapsize, cbar_mode=cbar_mode)
     return mplt.axes(fig.grid[0])
 
@@ -132,6 +132,19 @@ def surfvelquiver(nc, t=0, **kwargs):
 
 basevelquiver.__doc__ = iplt.basevelquiver.__doc__
 surfvelquiver.__doc__ = iplt.surfvelquiver.__doc__
+
+### Streamplot mapping functions ###
+
+def basevelstreamplot(nc, t=0, **kwargs):
+    ax = _init_figure(nc, cbar_mode='none')
+    im = iplt.basevelstreamplot(nc, t, **kwargs)
+
+def surfvelstreamplot(nc, t=0, **kwargs):
+    ax = _init_figure(nc, cbar_mode='none')
+    im = iplt.surfvelstreamplot(nc, t, **kwargs)
+
+basevelstreamplot.__doc__ = iplt.basevelstreamplot.__doc__
+surfvelstreamplot.__doc__ = iplt.surfvelstreamplot.__doc__
 
 ### Composite mapping functions ###
 
