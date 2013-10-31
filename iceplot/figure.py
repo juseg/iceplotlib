@@ -3,7 +3,6 @@
 Provide GridFigure class and derivatives, where the figure size is computed from a given map size and an axes grid.
 """
 
-from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 from mpl_toolkits.axes_grid1.axes_grid import ImageGrid
 
@@ -23,21 +22,27 @@ class GridFigure(Figure):
     (rows, cols) = nrows_ncols
     gridw = cols*(mapw+pad)-pad
     gridh = rows*(maph+pad)-pad
-    if cbar_mode is 'each' and cbar_location is 'right':
-      gridw += 3*cols*pad
-    if cbar_mode is 'each' and cbar_location is 'top':
-      gridh += 3*cols*pad
-    if cbar_mode is 'single' and cbar_location is 'right':
-      gridw += 3*pad
-    if cbar_mode is 'single' and cbar_location is 'top':
-      gridh += 3*pad
-    #gridsize=(gridw*mm,gridh*mm)
 
     # compute figure size
-    figw = gridw + 3*pad
+    figw = gridw + 2*pad
     figh = gridh + 2*pad
     if sideplot:
       figw = figw + figh - 2*pad
+
+    # additional space for colorbars
+    if cbar_mode is 'each' and cbar_location is 'right':
+      gridw += 2*cols*pad
+      figw  += (2*cols+2)*pad
+    if cbar_mode is 'each' and cbar_location is 'top':
+      gridh += 2*rows*pad
+      figh  += 2*rows*pad
+    if cbar_mode is 'single' and cbar_location is 'right':
+      gridw += 2*pad
+      figw  += 4*pad
+    if cbar_mode is 'single' and cbar_location is 'top':
+      gridh += 2*pad
+      figh  += 2*pad
+    #gridsize=(gridw*mm,gridh*mm)
 
     # initialize figure
     Figure.__init__(self, **kwargs)
