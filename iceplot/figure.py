@@ -7,53 +7,58 @@ from matplotlib.figure import Figure
 from mpl_toolkits.axes_grid1.axes_grid import ImageGrid
 
 mm = 1/25.4
-pad  = 5.
 
 ### GridFigure class ###
 
 class GridFigure(Figure):
   """Gridded figure with arbitrary cols and rows and optional colorbars"""
 
-  def __init__(self, mapsize, nrows_ncols, cbar_mode=None, cbar_location='right', sideplot=False, **kwargs):
+  def __init__(self,
+      mapsize, nrows_ncols, axes_pad=5*mm,
+      cbar_mode=None, cbar_location='right',
+      cbar_pad=5*mm, cbar_size=5*mm,
+      sideplot=False, **kwargs):
     """Compute figure size and initialize axes grid"""
 
     # compute axes grid size
     (mapw, maph) = mapsize
+    maph *= mm
+    mapw *= mm
     (rows, cols) = nrows_ncols
-    gridw = cols*(mapw+pad)-pad
-    gridh = rows*(maph+pad)-pad
+    gridw = cols*(mapw+axes_pad) - axes_pad
+    gridh = rows*(maph+axes_pad) - axes_pad
 
     # compute figure size
-    figw = gridw + 2*pad
-    figh = gridh + 2*pad
+    figw = gridw + 2*axes_pad
+    figh = gridh + 2*axes_pad
     if sideplot:
-      figw = figw + figh - 2*pad
+      figw = figw + figh - 2*axes_pad
 
     # additional space for colorbars
+    # TODO: allow 'bottom' and 'left' colorbar locations
     if cbar_mode is 'each' and cbar_location is 'right':
-      gridw += 2*cols*pad
-      figw  += (2*cols+2)*pad
+      gridw += cols*(cbar_size + cbar_pad)
+      figw  += cols*(cbar_size + cbar_pad) + 10.*mm
     if cbar_mode is 'each' and cbar_location is 'top':
-      gridh += 2*rows*pad
-      figh  += 2*rows*pad
+      gridh += rows*(cbar_size + cbar_pad)
+      figh  += rows*(cbar_size + cbar_pad) + 10.*mm
     if cbar_mode is 'single' and cbar_location is 'right':
-      gridw += 2*pad
-      figw  += 4*pad
+      gridw += cbar_size + cbar_pad
+      figw  += cbar_size + cbar_pad + 10.*mm
     if cbar_mode is 'single' and cbar_location is 'top':
-      gridh += 2*pad
-      figh  += 2*pad
-    #gridsize=(gridw*mm,gridh*mm)
+      gridh += cbar_size + cbar_pad
+      figh  += cbar_size + cbar_pad + 10.*mm
 
     # initialize figure
     Figure.__init__(self, **kwargs)
-    self.set_size_inches(figw*mm,figh*mm)
-    rect = (pad/figw, pad/figh, gridw/figw, gridh/figh)
+    self.set_size_inches(figw,figh)
+    rect = (axes_pad/figw, axes_pad/figh, gridw/figw, gridh/figh)
 
     # create axes grid
     self.grid = ImageGrid(self, rect,
-      nrows_ncols=nrows_ncols, axes_pad=pad*mm,
+      nrows_ncols=nrows_ncols, axes_pad=axes_pad,
       cbar_mode=cbar_mode, cbar_location=cbar_location,
-      cbar_pad=pad*mm, cbar_size=pad*mm)
+      cbar_pad=cbar_pad, cbar_size=cbar_size)
 
     # remove ticks
     for ax in self.grid:
@@ -62,7 +67,8 @@ class GridFigure(Figure):
 
     # add more axes
     if sideplot:
-      self.add_axes([(gridw+4*pad)/figw, 2*pad/figh, (maph-2*pad)/figw, (maph-2*pad)/figh])
+      self.add_axes([(gridw+4*axes_pad)/figw, 2*axes_pad/figh,
+        (maph-2*axes_pad)/figw, (maph-2*axes_pad)/figh])
 
 ### Derivative classes ###
 
