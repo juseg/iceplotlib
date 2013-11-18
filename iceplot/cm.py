@@ -5,44 +5,59 @@ Provide custom colormaps.
 
 from matplotlib.colors import LinearSegmentedColormap
 
-# Topography colormaps
+def _cmap_from_list(name, colors):
+    """Create a linear colormap from a non-normalized color list"""
+    if len(colors[0]) == 2:
+        bounds, colors = zip(*colors)
+        bmin = bounds[0]
+        bmax = bounds[-1]
+        bounds = [(b - bmin) / (bmax - bmin) for b in bounds]
+        colors = zip(bounds, colors)
+    return LinearSegmentedColormap.from_list(name, colors)
 
-_sea_topo_bounds = [1-z/6000. for z in
-  [6000, 5000, 4000, 3000, 2000, 1000, 500, 200, 100, 0]]
+# Topographic colormaps
 
 _sea_topo_clist = [
- '#71abd8', '#79b2de', '#84b9e3', '#8dc1ea', '#96c9f0', '#a1d2f7',
- '#acdbfb', '#b9e3ff', '#c6ecff', '#d8f2fe']
+    (-6000., '#71abd8'),
+    (-3000., '#79b2de'),
+    (-2000., '#84b9e3'),
+    (-1500., '#8dc1ea'),
+    (-1000., '#96c9f0'),
+    ( -750., '#a1d2f7'),
+    ( -500., '#acdbfb'),
+    ( -250., '#b9e3ff'),
+    ( -100., '#c6ecff'),
+    (    0., '#d8f2fe')]
 
-sea_topo = LinearSegmentedColormap.from_list(
-  'sea_topo', zip(_sea_topo_bounds, _sea_topo_clist))
-
-_land_topo_bounds= [z/6000. for z in
-  [    0,    1,  100,  250,  500,  750, 1000, 1250, 1500, 1750,
-    2000, 2250, 2500, 2750, 3000, 3500, 4000, 4500, 5000, 6000]]
+sea_topo = _cmap_from_list('sea_topo', _sea_topo_clist)
 
 _land_topo_clist = [
- '#d8f2fe', '#94bf8b', '#acd0a5', '#a8c68f', '#bdcc96', '#d1d7ab',
- '#e1e4b5', '#efebc0', '#e8e1b6', '#ded6a3', '#d3ca9d', '#cab982',
- '#c3a76b', '#b9985a', '#aa8753', '#ac9a7c', '#baae9a', '#cac3b8',
- '#e0ded8', '#f5f4f2']
+(   0., '#d8f2fe'),
+( 0.01, '#94bf8b'),
+(  50., '#acd0a5'),
+( 100., '#a8c68f'),
+( 250., '#bdcc96'),
+( 500., '#d1d7ab'),
+( 750., '#e1e4b5'),
+(1000., '#efebc0'),
+(1250., '#e8e1b6'),
+(1500., '#ded6a3'),
+(1750., '#d3ca9d'),
+(2000., '#cab982'),
+(3000., '#c3a76b'),
+(4000., '#b9985a'),
+(6000., '#aa8753')]
 
-land_topo = LinearSegmentedColormap.from_list(
-  'land_topo', zip(_land_topo_bounds, _land_topo_clist))
-
-_topo_bounds = [z/2 for z in _sea_topo_bounds[:-1]] + \
-  [(z+1)/2 for z in _land_topo_bounds]
+land_topo = _cmap_from_list('land_topo', _land_topo_clist)
 
 _topo_clist = _sea_topo_clist[:-1] + _land_topo_clist
 
-topo = LinearSegmentedColormap.from_list(
-  'topo', zip(_topo_bounds, _topo_clist))
+topo = _cmap_from_list('topo', _topo_clist)
 
 # Other colormaps
 
 _velocity_clist = [
   '#ffffff', '#00ffff', '#ffff00', '#ff0000', '#000000']
 
-velocity = LinearSegmentedColormap.from_list(
-  'velocity', _velocity_clist)
+velocity = _cmap_from_list('velocity', _velocity_clist)
 
