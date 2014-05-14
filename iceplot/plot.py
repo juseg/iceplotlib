@@ -123,7 +123,7 @@ def airtempimage(nc, t=0, **kwargs):
 
       *cmap*: [ *None* | Colormap ]
         A :class:`matplotlib.colors.Colormap` instance. If *None*,
-        :data:`matplotlib.cm.Spectral_r`is used.
+        :data:`matplotlib.cm.Spectral_r` is used.
       *norm*: [ *None* | Normalize ]
         A :class:`matplotlib.colors.Normalize` instance. If *None*,
         luminance is scaled linearly between -30 and 30 degree C.
@@ -240,20 +240,22 @@ def _contours(*args, **kwargs):
     return cf or cl
 
 def icemargincontour(nc, t=0, **kwargs):
-    """Draw a contour along the ice margin using
+    """
+    Draw a contour along the ice margin using
     :func:`matplotlib.pyplot.contour` and
     :func:`matplotlib.pyplot.contourf`.
 
     Keyword arguments:
 
-      *cmap*: [ *None* | Colormap ]
-        A :class:`matplotlib.colors.Colormap` instance. If *None*,
-        a default Wikipedia-based colormap is used.
-      *norm*: [ *None* | Normalize ]
-        A :class:`matplotlib.colors.Normalize` instance. If *None*,
-        luminance is scaled linearly between -6000 and 6000 m.
+      *level*: [ *None* | scalar ]
+        Thickness level used for ice margin. If *None*, a value of 1 (m)
+        is used in order to ignore potential annual snow cover and
+        numerical artefacts.
+      *linecolor*: [ *None* | string | mpl_colors ]
+        Line color. A color argument in :mod:`matplotlib` sense.
+        If *None*, defaults to black.
 
-    See :func:`matplotlib.pyplot.imshow` for complete documentation.
+    See :func:`matplotlib.pyplot.contour` for complete documentation.
     """
     thk = _extract(nc, 'thk', t)
     return _contours(thk,
