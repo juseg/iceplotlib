@@ -360,7 +360,10 @@ def _icevelquiver(nc, t=0, surf='surf', **kwargs):
     thk = _extract(nc, 'thk', t)
     u = _extract(nc, 'uvel'+surf, t)
     v = _extract(nc, 'vvel'+surf, t)
-    c = _extract(nc, 'c'+surf, t)
+    try:
+      c = _extract(nc, 'c'+surf, t)
+    except KeyError:
+      c = (u**2 + v**2)**0.5
     scale = kwargs.pop('scale', 100)
     u = np.sign(u)*np.log(1+np.abs(u)/scale)
     v = np.sign(v)*np.log(1+np.abs(v)/scale)
