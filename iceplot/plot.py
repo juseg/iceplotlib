@@ -7,7 +7,7 @@ import numpy as np
 from matplotlib import pyplot as mplt
 from matplotlib import colors as mcolors
 
-from iceplot import cm as icm
+from iceplot.colors import default_cmaps, default_norms
 from iceplot import figure as ifig
 
 ### Figure functions ###
@@ -65,8 +65,8 @@ def bedtopoimage(nc, t=0, **kwargs):
     """
     topo = _extract(nc, 'topg', t)
     return mplt.imshow(topo,
-      cmap = kwargs.pop('cmap', icm.topo),
-      norm = kwargs.pop('norm', mcolors.Normalize(-6000,6000)),
+      cmap = kwargs.pop('cmap', default_cmaps['topg']),
+      norm = kwargs.pop('norm', default_norms['topg']),
       **kwargs)
 
 def surftopoimage(nc, t=0, **kwargs):
@@ -86,8 +86,8 @@ def surftopoimage(nc, t=0, **kwargs):
     """
     topo = _extract(nc, 'usurf', t)
     return mplt.imshow(topo,
-      cmap = kwargs.pop('cmap', icm.land_topo),
-      norm = kwargs.pop('norm', mcolors.Normalize(0,6000)),
+      cmap = kwargs.pop('cmap', default_cmaps['usurf']),
+      norm = kwargs.pop('norm', default_norms['topg']),
       **kwargs)
 
 def basetempimage(nc, t=0, **kwargs):
@@ -110,8 +110,8 @@ def basetempimage(nc, t=0, **kwargs):
     temp  = _extract(nc, 'temppabase', t)
     temp  = np.ma.masked_where(thk < 1, temp)
     return mplt.imshow(temp,
-      cmap = kwargs.pop('cmap', mplt.cm.Blues_r),
-      norm = kwargs.pop('norm', mcolors.Normalize(-10, 0)),
+      cmap = kwargs.pop('cmap', default_cmaps['temppabase']),
+      norm = kwargs.pop('norm', default_norms['temppabase']),
       **kwargs)
 
 def airtempimage(nc, t=0, **kwargs):
@@ -132,8 +132,8 @@ def airtempimage(nc, t=0, **kwargs):
     """
     temp = _extract(nc, 'air_temp', t)
     return mplt.imshow(temp,
-      cmap = kwargs.pop('cmap', mplt.cm.Spectral_r),
-      norm = kwargs.pop('norm', mcolors.Normalize(-30,30)),
+      cmap = kwargs.pop('cmap', default_cmaps['air_temp']),
+      norm = kwargs.pop('norm', default_norms['air_temp']),
       **kwargs)
 
 def precipimage(nc, t=0, **kwargs):
@@ -153,8 +153,8 @@ def precipimage(nc, t=0, **kwargs):
     """
     prec = _extract(nc, 'precipitation', t)
     return mplt.imshow(prec,
-      cmap = kwargs.pop('cmap', mplt.cm.YlGnBu),
-      norm = kwargs.pop('norm', mcolors.LogNorm(0.1,10)),
+      cmap = kwargs.pop('cmap', default_cmaps['precipitation']),
+      norm = kwargs.pop('norm', default_norms['precipitation']),
       **kwargs)
 
 def _icevelimage(nc, t=0, surf='surf', **kwargs):
@@ -163,8 +163,8 @@ def _icevelimage(nc, t=0, surf='surf', **kwargs):
     c   = _extract(nc, 'c'+surf, t)
     c   = np.ma.masked_where(thk < 1, c)
     return mplt.imshow(c,
-      cmap = kwargs.pop('cmap', icm.velocity),
-      norm = kwargs.pop('norm', mcolors.LogNorm(10, 10000)),
+      cmap = kwargs.pop('cmap', default_cmaps['c'+surf]),
+      norm = kwargs.pop('norm', default_norms['c'+surf]),
       **kwargs)
 
 def basevelimage(nc, t=0, **kwargs):
@@ -281,7 +281,7 @@ def basetempcontour(nc, t=0, **kwargs):
     temp  = np.ma.masked_where(thk < 1, temp)
     return _contours(temp,
       levels     = kwargs.pop('levels', [-10, -8, -6, -4, -2, -1e-6]),
-      cmap       = kwargs.pop('cmap', mplt.cm.Blues_r),
+      cmap       = kwargs.pop('cmap', default_cmaps['temppabase']),
       extend     = kwargs.pop('extend', 'both'),
       linewidths = kwargs.pop('linewidths', 0.2),
       linecolors = kwargs.pop('linecolors', 'black'),
@@ -314,8 +314,8 @@ def airtempcontour(nc, t=0, **kwargs):
     temp = _extract(nc, 'air_temp', t) - 273.15
     return _contours(temp,
       levels     = kwargs.pop('levels', range(-30, 31, 5)),
-      cmap       = kwargs.pop('cmap', mplt.cm.Spectral_r),
-      norm       = kwargs.pop('norm', mcolors.Normalize(-30,30)),
+      cmap       = kwargs.pop('cmap', default_cmaps['air_temp']),
+      norm       = kwargs.pop('norm', default_norms['air_temp']),
       linewidths = kwargs.pop('linewidths', 0.2),
       linecolors = kwargs.pop('linecolors', 'black'),
       linestyles = kwargs.pop('linestyles', 'solid'),
@@ -326,8 +326,8 @@ def precipcontour(nc, t=0, **kwargs):
     prec = _extract(nc, 'precipitation', t)
     return _contours(prec,
       levels     = kwargs.pop('levels', [0.1, 0.2, 0.5, 1, 2, 5, 10]),
-      cmap       = kwargs.pop('cmap', mplt.cm.YlGnBu),
-      norm       = kwargs.pop('norm', mcolors.LogNorm(0.1,10)),
+      cmap       = kwargs.pop('cmap', default_cmaps['precipitation']),
+      norm       = kwargs.pop('norm', default_norms['precipitation']),
       linewidths = kwargs.pop('linewidths', 0.2),
       linecolors = kwargs.pop('linecolors', 'black'),
       **kwargs)
@@ -339,8 +339,8 @@ def _icevelcontour(nc, t=0, surf='surf', **kwargs):
     c   = np.ma.masked_where(thk < 1, c)
     return _contours(c,
       levels     = kwargs.pop('levels', [10,30,100,300,1000,3000,10000]),
-      cmap       = kwargs.pop('cmap', icm.velocity),
-      norm       = kwargs.pop('norm', mcolors.LogNorm(10, 10000)),
+      cmap       = kwargs.pop('cmap', default_cmaps['c'+surf]),
+      norm       = kwargs.pop('norm', default_norms['c'+surf]),
       linewidths = kwargs.pop('linewidths', 0.2),
       linecolors = kwargs.pop('linecolors', 'black'),
       **kwargs)
@@ -398,8 +398,8 @@ def _icevelstreamplot(nc, t=0, surf='surf', **kwargs):
     return mplt.streamplot(x, y, u, v,
       linewidth = kwargs.pop('linewidths', 0.5),
       color     = kwargs.pop('color', c),
-      cmap      = kwargs.pop('cmap', icm.velocity),
-      norm      = kwargs.pop('norm', mcolors.LogNorm(10, 10000)),
+      cmap      = kwargs.pop('cmap', default_cmaps['c'+surf]),
+      norm      = kwargs.pop('norm', default_norms['c'+surf]),
       **kwargs)
 
 def basevelstreamplot(nc, t=0, **kwargs):
