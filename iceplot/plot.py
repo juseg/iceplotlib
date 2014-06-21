@@ -50,6 +50,42 @@ def _extract(nc, varname, t):
 
 ### Generic mapping functions ###
 
+def contour(filename, varname, t=0, **kwargs):
+    nc = Dataset(filename)
+    x = nc.variables['x']
+    y = nc.variables['y']
+    data = nc.variables[varname][t].T
+    if varname not in ('mask', 'topg'):
+        mask = nc.variables['mask'][t].T
+        thk = nc.variables['thk'][t].T
+        icefree = (mask == 0) + (mask == 4)
+        data = np.ma.masked_where(icefree, data)
+    ax = gca()
+    cs = ax.contour(x[:], y[:], data,
+        cmap = kwargs.pop('cmap', default_cmaps.get(varname)),
+        norm = kwargs.pop('norm', default_norms.get(varname)),
+        **kwargs)
+    nc.close()
+    return cs
+
+def contourf(filename, varname, t=0, **kwargs):
+    nc = Dataset(filename)
+    x = nc.variables['x']
+    y = nc.variables['y']
+    data = nc.variables[varname][t].T
+    if varname not in ('mask', 'topg'):
+        mask = nc.variables['mask'][t].T
+        thk = nc.variables['thk'][t].T
+        icefree = (mask == 0) + (mask == 4)
+        data = np.ma.masked_where(icefree, data)
+    ax = gca()
+    cs = ax.contourf(x[:], y[:], data,
+        cmap = kwargs.pop('cmap', default_cmaps.get(varname)),
+        norm = kwargs.pop('norm', default_norms.get(varname)),
+        **kwargs)
+    nc.close()
+    return cs
+
 def imshow(filename, varname, t=0, **kwargs):
     nc = Dataset(filename)
     x = nc.variables['x']

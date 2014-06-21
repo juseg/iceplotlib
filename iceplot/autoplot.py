@@ -3,6 +3,7 @@
 Provide an automatic plotting interface to plot entire figures with title and colorbar.
 """
 
+from netCDF4 import Dataset
 from matplotlib import pyplot as mplt
 from iceplot import plot as iplt
 
@@ -14,15 +15,30 @@ def _init_figure(nc, cbar_mode=None):
     fig = iplt.simplefigure(mapsize, cbar_mode=cbar_mode)
     return mplt.axes(fig.grid[0])
 
-### Image mapping functions ###
+### Generic mapping functions ###
+
+def contour(filename, varname, t=0, **kwargs):
+    nc = Dataset(filename)
+    ax = _init_figure(nc, cbar_mode='single')
+    im = iplt.contour(filename, varname, t, **kwargs)
+    cb = mplt.colorbar(im, ax.cax)
+    cb.set_label(nc.variables[varname].long_name)
+
+def contourf(filename, varname, t=0, **kwargs):
+    nc = Dataset(filename)
+    ax = _init_figure(nc, cbar_mode='single')
+    im = iplt.contourf(filename, varname, t, **kwargs)
+    cb = mplt.colorbar(im, ax.cax)
+    cb.set_label(nc.variables[varname].long_name)
 
 def imshow(filename, varname, t=0, **kwargs):
-    from netCDF4 import Dataset
     nc = Dataset(filename)
     ax = _init_figure(nc, cbar_mode='single')
     im = iplt.imshow(filename, varname, t, **kwargs)
     cb = mplt.colorbar(im, ax.cax)
     cb.set_label(nc.variables[varname].long_name)
+
+### Image mapping functions ###
 
 def bedtopoimage(nc, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='single')
