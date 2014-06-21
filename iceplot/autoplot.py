@@ -16,6 +16,14 @@ def _init_figure(nc, cbar_mode=None):
 
 ### Image mapping functions ###
 
+def imshow(filename, varname, t=0, **kwargs):
+    from netCDF4 import Dataset
+    nc = Dataset(filename)
+    ax = _init_figure(nc, cbar_mode='single')
+    im = iplt.imshow(filename, varname, t, **kwargs)
+    cb = mplt.colorbar(im, ax.cax)
+    cb.set_label(nc.variables[varname].long_name)
+
 def bedtopoimage(nc, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='single')
     im = iplt.bedtopoimage(nc, t, **kwargs)
@@ -155,4 +163,3 @@ def icemap(nc, t=0, **kwargs):
     cb.set_label('ice surface velocity (m/yr)')
 
 icemap.__doc__ = iplt.icemap.__doc__
-

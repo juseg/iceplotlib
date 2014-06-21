@@ -4,7 +4,9 @@ Provide the actual plotting interface
 """
 
 import numpy as np
+from netCDF4 import Dataset
 from matplotlib import pyplot as mplt
+from matplotlib.pyplot import gca
 from matplotlib import colors as mcolors
 
 from iceplot.colors import default_cmaps, default_norms
@@ -45,6 +47,31 @@ def _extract(nc, varname, t):
       return var[:].mean(axis=2).T
     else:
       return var[t].T
+
+### Generic mapping functions ###
+
+def imshow(filename, varname, t=0, **kwargs):
+    nc = Dataset(filename)
+    x = nc.variables['x']
+    y = nc.variables['y']
+    w = (3*x[0]-x[1])/2
+    e = (3*x[-1]-x[-2])/2
+    n = (3*y[0]-y[1])/2
+    s = (3*y[-1]-y[-2])/2
+    data = nc.variables[varname][t].T
+    if varname not in ('mask', 'topg'):
+        mask = nc.variables['mask'][t].T
+        thk = nc.variables['thk'][t].T
+        icefree = (mask == 0) + (mask == 4)
+        data = np.ma.masked_where(icefree, data)
+    ax = gca()
+    im = ax.imshow(data,
+      cmap = kwargs.pop('cmap', default_cmaps.get(varname)),
+      norm = kwargs.pop('norm', default_norms.get(varname)),
+      extent = kwargs.pop('extent', (w, e, n, s)),
+      **kwargs)
+    nc.close()
+    return im
 
 ### Image mapping functions ###
 
