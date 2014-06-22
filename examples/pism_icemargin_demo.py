@@ -2,14 +2,16 @@
 Plot an image map of bedrock surface elevation.
 """
 
+from netCDF4 import Dataset
 from matplotlib import pyplot as plt
 from iceplot import autoplot as aplt
 
 # load data
-ncfname = 'pism_plot_sample.nc'
+nc = Dataset('pism_plot_sample.nc')
 
 # plot
-im = aplt.icemargin(ncfname)
+im = aplt.icemargin(nc)
 
 # show
+nc.close()
 plt.show()

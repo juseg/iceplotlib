@@ -17,33 +17,29 @@ def _init_figure(nc, cbar_mode=None):
 
 ### Generic mapping functions ###
 
-def contour(filename, varname, t=0, **kwargs):
-    nc = Dataset(filename)
+def contour(nc, varname, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='single')
-    im = iplt.contour(filename, varname, t, **kwargs)
+    im = iplt.contour(nc, varname, t=t, **kwargs)
     cb = mplt.colorbar(im, ax.cax)
     cb.set_label(nc.variables[varname].long_name)
 
-def contourf(filename, varname, t=0, **kwargs):
-    nc = Dataset(filename)
+def contourf(nc, varname, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='single')
-    im = iplt.contourf(filename, varname, t, **kwargs)
+    im = iplt.contourf(nc, varname, t=t, **kwargs)
     cb = mplt.colorbar(im, ax.cax)
     cb.set_label(nc.variables[varname].long_name)
 
-def imshow(filename, varname, t=0, **kwargs):
-    nc = Dataset(filename)
+def imshow(nc, varname, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='single')
-    im = iplt.imshow(filename, varname, t, **kwargs)
+    im = iplt.imshow(nc, varname, t=t, **kwargs)
     cb = mplt.colorbar(im, ax.cax)
     cb.set_label(nc.variables[varname].long_name)
 
 ### Specific mapping functions ###
 
-def icemargin(filename, t=0, **kwargs):
-    nc = Dataset(filename)
+def icemargin(nc, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='none')
-    im = iplt.icemargin(filename, t, **kwargs)
+    im = iplt.icemargin(nc, t=t, **kwargs)
 
 ### Image mapping functions ###
 
@@ -179,10 +175,9 @@ surfvelstreamplot.__doc__ = iplt.surfvelstreamplot.__doc__
 
 ### Composite mapping functions ###
 
-def icemap(filename, t=0, **kwargs):
-    nc = Dataset(filename)
+def icemap(nc, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='single')
-    im = iplt.icemap(filename, t, **kwargs)
+    im = iplt.icemap(nc, t=t, **kwargs)
     cb = mplt.colorbar(im, ax.cax)
     cb.set_label('ice surface velocity (m/yr)')
 
