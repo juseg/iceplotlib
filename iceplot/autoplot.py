@@ -179,10 +179,11 @@ surfvelstreamplot.__doc__ = iplt.surfvelstreamplot.__doc__
 
 ### Composite mapping functions ###
 
-def icemap(nc, t=0, **kwargs):
+def icemap(filename, t=0, **kwargs):
+    nc = Dataset(filename)
     ax = _init_figure(nc, cbar_mode='single')
-    im = iplt.icemap(nc, t, **kwargs)
-    cb = mplt.colorbar(im, ax.cax, format='%g')
+    im = iplt.icemap(filename, t, **kwargs)
+    cb = mplt.colorbar(im, ax.cax)
     cb.set_label('ice surface velocity (m/yr)')
 
 icemap.__doc__ = iplt.icemap.__doc__

@@ -493,7 +493,7 @@ def surfvelstreamplot(nc, t=0, **kwargs):
 
 ### Composite mapping functions ###
 
-def icemap(nc, t=0, **kwargs):
+def icemap(filename, t=0, **kwargs):
     """Draw basal topography, surface velocity and elevation contours.
 
     **Example:**
@@ -502,23 +502,22 @@ def icemap(nc, t=0, **kwargs):
     """
 
     # draw bed topography
-    bedtopoimage(nc, t,
-      **{kw: kwargs['bedtopo_'+kw]
-        for kw in ('cmap', 'norm') if 'bedtopo_'+kw in kwargs})
+    imshow(filename, 'topg', t,
+      **{kw: kwargs['topg_'+kw]
+        for kw in ('cmap', 'norm') if 'topg_'+kw in kwargs})
 
     # draw surface velocities
-    im = surfvelimage(nc, t,
-      **{kw: kwargs['surfvel_'+kw]
-        for kw in ('cmap', 'norm') if 'surfvel_'+kw in kwargs})
+    im = imshow(filename, 'velsurf_mag', t,
+      **{kw: kwargs['velsurf_'+kw]
+        for kw in ('cmap', 'norm') if 'velsurf_'+kw in kwargs})
 
     # draw surface topography contours
-    surftopocontour(nc, t,
-      **{kw: kwargs['surftopo_'+kw]
-        for kw in ('levels', 'linecolors') if 'surftopo_'+kw in kwargs})
+    contour(filename, 'usurf', t,
+      **{kw: kwargs['usurf_'+kw]
+        for kw in ('levels', 'cmap', 'colors') if 'usurf_'+kw in kwargs})
 
     # draw ice margin contour
-    icemargincontour(nc, t)
+    icemargin(filename, t)
 
     # return surface velocity image
     return im
-

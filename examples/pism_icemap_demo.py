@@ -2,16 +2,15 @@
 Draw the module's canonical icemap.
 """
 
-from netCDF4 import Dataset
-from matplotlib import pyplot as mplt
+from matplotlib import pyplot as plt
 from iceplot import autoplot as aplt
 
 # load data
-nc = Dataset('pism_plot_sample.nc')
+filename = 'pism_plot_sample.nc'
 
 # plot
-im = aplt.icemap(nc)
+aplt.icemap(filename, velsurf_cmap='CMRmap_r',
+            usurf_cmap=None, usurf_colors='k')
 
 # show
-mplt.show()
-
+plt.show()
