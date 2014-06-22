@@ -50,17 +50,20 @@ def _oldextract(nc, varname, t):
     var = nc.variables[varname]
 
     if t == 'djf':
-      return var[[12,0,1]].mean(axis=2).T
-    if t == 'mam':
-      return var[2:5].mean(axis=2).T
-    if t == 'jja':
-      return var[6:8].mean(axis=2).T
-    if t == 'son':
-      return var[9:11].mean(axis=2).T
-    if t == 'mean':
-      return var[:].mean(axis=2).T
+      z = var[[12,0,1]].mean(axis=2)
+    elif t == 'mam':
+      z = var[2:5].mean(axis=2)
+    elif t == 'jja':
+      z = var[6:8].mean(axis=2)
+    elif t == 'son':
+      z = var[9:11].mean(axis=2)
+    elif t == 'mean':
+      z = var[:].mean(axis=2)
+    elif t is None:
+      z = var[:]
     else:
-      return var[t].T
+      z = var[t]
+    return z.T
 
 ### Generic mapping functions ###
 
@@ -102,11 +105,7 @@ def icemargin(filename, t=0, **kwargs):
     """
     Draw a contour along the ice margin.
     """
-    nc = Dataset(filename)
-    x = nc.variables['x'][:]
-    y = nc.variables['y'][:]
-    mask = nc.variables['mask'][t].T
-    nc.close()
+    x, y, mask = _extract(filename, 'mask', t)
     icy = (mask == 1) + (mask == 2)
     ax = gca()
     return ax.contour(x, y, icy, levels=[0.5],
@@ -480,7 +479,7 @@ def surfvelstreamplot(nc, t=0, **kwargs):
 
 ### Composite mapping functions ###
 
-def icemap(filename, t=0, **kwargs):
+def icemap(filename, t=None, **kwargs):
     """Draw basal topography, surface velocity and elevation contours.
 
     **Example:**
