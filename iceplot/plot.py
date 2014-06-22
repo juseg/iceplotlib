@@ -31,9 +31,23 @@ def doubleinlinefigure(mapsize, **kwargs):
 
 ### Data extraction ###
 
-def _extract(nc, varname, t):
-    var = nc.variables[varname]
+def _extract(filename, varname, t):
     """Extract data from a netcdf file"""
+    nc = Dataset(filename)
+    x = nc.variables['x'][:]
+    y = nc.variables['y'][:]
+    z = _oldextract(nc, varname, t)
+    if varname not in ('mask', 'topg'):
+        mask = nc.variables['mask'][t].T
+        icefree = (mask == 0) + (mask == 4)
+        z = np.ma.masked_where(icefree, z)
+    nc.close()
+    return x, y, z
+
+
+def _oldextract(nc, varname, t):
+    """Extract data from a netcdf file"""
+    var = nc.variables[varname]
 
     if t == 'djf':
       return var[[12,0,1]].mean(axis=2).T
@@ -51,62 +65,35 @@ def _extract(nc, varname, t):
 ### Generic mapping functions ###
 
 def contour(filename, varname, t=0, **kwargs):
-    nc = Dataset(filename)
-    x = nc.variables['x']
-    y = nc.variables['y']
-    data = nc.variables[varname][t].T
-    if varname not in ('mask', 'topg'):
-        mask = nc.variables['mask'][t].T
-        thk = nc.variables['thk'][t].T
-        icefree = (mask == 0) + (mask == 4)
-        data = np.ma.masked_where(icefree, data)
+    x, y, z = _extract(filename, varname, t)
     ax = gca()
-    cs = ax.contour(x[:], y[:], data,
+    cs = ax.contour(x[:], y[:], z,
         cmap = kwargs.pop('cmap', default_cmaps.get(varname)),
         norm = kwargs.pop('norm', default_norms.get(varname)),
         **kwargs)
-    nc.close()
     return cs
 
 def contourf(filename, varname, t=0, **kwargs):
-    nc = Dataset(filename)
-    x = nc.variables['x']
-    y = nc.variables['y']
-    data = nc.variables[varname][t].T
-    if varname not in ('mask', 'topg'):
-        mask = nc.variables['mask'][t].T
-        thk = nc.variables['thk'][t].T
-        icefree = (mask == 0) + (mask == 4)
-        data = np.ma.masked_where(icefree, data)
+    x, y, z = _extract(filename, varname, t)
     ax = gca()
-    cs = ax.contourf(x[:], y[:], data,
+    cs = ax.contourf(x[:], y[:], z,
         cmap = kwargs.pop('cmap', default_cmaps.get(varname)),
         norm = kwargs.pop('norm', default_norms.get(varname)),
         **kwargs)
-    nc.close()
     return cs
 
 def imshow(filename, varname, t=0, **kwargs):
-    nc = Dataset(filename)
-    x = nc.variables['x']
-    y = nc.variables['y']
+    x, y, z = _extract(filename, varname, t)
     w = (3*x[0]-x[1])/2
     e = (3*x[-1]-x[-2])/2
     n = (3*y[0]-y[1])/2
     s = (3*y[-1]-y[-2])/2
-    data = nc.variables[varname][t].T
-    if varname not in ('mask', 'topg'):
-        mask = nc.variables['mask'][t].T
-        thk = nc.variables['thk'][t].T
-        icefree = (mask == 0) + (mask == 4)
-        data = np.ma.masked_where(icefree, data)
     ax = gca()
-    im = ax.imshow(data,
+    im = ax.imshow(z,
       cmap = kwargs.pop('cmap', default_cmaps.get(varname)),
       norm = kwargs.pop('norm', default_norms.get(varname)),
       extent = kwargs.pop('extent', (w, e, n, s)),
       **kwargs)
-    nc.close()
     return im
 
 ### Specific mapping functions ###
@@ -144,7 +131,7 @@ def bedtopoimage(nc, t=0, **kwargs):
 
     See :func:`matplotlib.pyplot.imshow` for complete documentation.
     """
-    topo = _extract(nc, 'topg', t)
+    topo = _oldextract(nc, 'topg', t)
     return mplt.imshow(topo,
       cmap = kwargs.pop('cmap', default_cmaps['topg']),
       norm = kwargs.pop('norm', default_norms['topg']),
@@ -165,7 +152,7 @@ def surftopoimage(nc, t=0, **kwargs):
 
     See :func:`matplotlib.pyplot.imshow` for complete documentation.
     """
-    topo = _extract(nc, 'usurf', t)
+    topo = _oldextract(nc, 'usurf', t)
     return mplt.imshow(topo,
       cmap = kwargs.pop('cmap', default_cmaps['usurf']),
       norm = kwargs.pop('norm', default_norms['topg']),
@@ -187,8 +174,8 @@ def basetempimage(nc, t=0, **kwargs):
 
     See :func:`matplotlib.pyplot.imshow` for complete documentation.
     """
-    thk   = _extract(nc, 'thk', t)
-    temp  = _extract(nc, 'temppabase', t)
+    thk   = _oldextract(nc, 'thk', t)
+    temp  = _oldextract(nc, 'temppabase', t)
     temp  = np.ma.masked_where(thk < 1, temp)
     return mplt.imshow(temp,
       cmap = kwargs.pop('cmap', default_cmaps['temppabase']),
@@ -211,7 +198,7 @@ def airtempimage(nc, t=0, **kwargs):
 
     See :func:`matplotlib.pyplot.imshow` for complete documentation.
     """
-    temp = _extract(nc, 'air_temp', t)
+    temp = _oldextract(nc, 'air_temp', t)
     return mplt.imshow(temp,
       cmap = kwargs.pop('cmap', default_cmaps['air_temp']),
       norm = kwargs.pop('norm', default_norms['air_temp']),
@@ -232,7 +219,7 @@ def precipimage(nc, t=0, **kwargs):
 
     See :func:`matplotlib.pyplot.imshow` for complete documentation.
     """
-    prec = _extract(nc, 'precipitation', t)
+    prec = _oldextract(nc, 'precipitation', t)
     return mplt.imshow(prec,
       cmap = kwargs.pop('cmap', default_cmaps['precipitation']),
       norm = kwargs.pop('norm', default_norms['precipitation']),
@@ -240,8 +227,8 @@ def precipimage(nc, t=0, **kwargs):
 
 def _icevelimage(nc, t=0, surf='surf', **kwargs):
     """Draw ice velocity map."""
-    thk = _extract(nc, 'thk', t)
-    c   = _extract(nc, 'c'+surf, t)
+    thk = _oldextract(nc, 'thk', t)
+    c   = _oldextract(nc, 'c'+surf, t)
     c   = np.ma.masked_where(thk < 1, c)
     return mplt.imshow(c,
       cmap = kwargs.pop('cmap', default_cmaps['c'+surf]),
@@ -338,7 +325,7 @@ def icemargincontour(nc, t=0, **kwargs):
 
     See :func:`matplotlib.pyplot.contour` for complete documentation.
     """
-    thk = _extract(nc, 'thk', t)
+    thk = _oldextract(nc, 'thk', t)
     return _contours(thk,
       levels     = [kwargs.pop('level', 1), np.inf],
       linecolors = kwargs.pop('linecolors', 'black'),
@@ -346,8 +333,8 @@ def icemargincontour(nc, t=0, **kwargs):
 
 def surftopocontour(nc, t=0, **kwargs):
     """Draw ice surface topography contours."""
-    thk   = _extract(nc, 'thk', t)
-    usurf = _extract(nc, 'usurf', t)
+    thk   = _oldextract(nc, 'thk', t)
+    usurf = _oldextract(nc, 'usurf', t)
     usurf = np.ma.masked_where(thk < 1, usurf)
     return _contours(usurf,
       levels     = kwargs.pop('levels', range(1000, 5000, 1000)),
@@ -357,8 +344,8 @@ def surftopocontour(nc, t=0, **kwargs):
 
 def basetempcontour(nc, t=0, **kwargs):
     """Draw pressure-adjusted bed temperature contours."""
-    thk   = _extract(nc, 'thk', t)
-    temp  = _extract(nc, 'temppabase', t)
+    thk   = _oldextract(nc, 'thk', t)
+    temp  = _oldextract(nc, 'temppabase', t)
     temp  = np.ma.masked_where(thk < 1, temp)
     return _contours(temp,
       levels     = kwargs.pop('levels', [-10, -8, -6, -4, -2, -1e-6]),
@@ -392,7 +379,7 @@ def airtempcontour(nc, t=0, **kwargs):
 
     See :func:`matplotlib.pyplot.imshow` for complete documentation.
     """
-    temp = _extract(nc, 'air_temp', t) - 273.15
+    temp = _oldextract(nc, 'air_temp', t) - 273.15
     return _contours(temp,
       levels     = kwargs.pop('levels', range(-30, 31, 5)),
       cmap       = kwargs.pop('cmap', default_cmaps['air_temp']),
@@ -404,7 +391,7 @@ def airtempcontour(nc, t=0, **kwargs):
 
 def precipcontour(nc, t=0, **kwargs):
     """Draw precipitation rate contours."""
-    prec = _extract(nc, 'precipitation', t)
+    prec = _oldextract(nc, 'precipitation', t)
     return _contours(prec,
       levels     = kwargs.pop('levels', [0.1, 0.2, 0.5, 1, 2, 5, 10]),
       cmap       = kwargs.pop('cmap', default_cmaps['precipitation']),
@@ -415,8 +402,8 @@ def precipcontour(nc, t=0, **kwargs):
 
 def _icevelcontour(nc, t=0, surf='surf', **kwargs):
     """Draw ice velocity contours."""
-    thk = _extract(nc, 'thk', t)
-    c   = _extract(nc, 'c'+surf, t)
+    thk = _oldextract(nc, 'thk', t)
+    c   = _oldextract(nc, 'c'+surf, t)
     c   = np.ma.masked_where(thk < 1, c)
     return _contours(c,
       levels     = kwargs.pop('levels', [10,30,100,300,1000,3000,10000]),
@@ -438,11 +425,11 @@ def surfvelcontour(nc, t=0, **kwargs):
 
 def _icevelquiver(nc, t=0, surf='surf', **kwargs):
     """Draw ice velocity quiver"""
-    thk = _extract(nc, 'thk', t)
-    u = _extract(nc, 'uvel'+surf, t)
-    v = _extract(nc, 'vvel'+surf, t)
+    thk = _oldextract(nc, 'thk', t)
+    u = _oldextract(nc, 'uvel'+surf, t)
+    v = _oldextract(nc, 'vvel'+surf, t)
     try:
-      c = _extract(nc, 'c'+surf, t)
+      c = _oldextract(nc, 'c'+surf, t)
     except KeyError:
       c = (u**2 + v**2)**0.5
     scale = kwargs.pop('scale', 100)
@@ -470,10 +457,10 @@ def _icevelstreamplot(nc, t=0, surf='surf', **kwargs):
     """Draw ice velocity quiver"""
     x = np.arange(len(nc.dimensions['x']))
     y = np.arange(len(nc.dimensions['y']))
-    thk = _extract(nc, 'thk', t)
-    u = _extract(nc, 'uvel'+surf, t)
-    v = _extract(nc, 'vvel'+surf, t)
-    c = _extract(nc, 'c'+surf, t)
+    thk = _oldextract(nc, 'thk', t)
+    u = _oldextract(nc, 'uvel'+surf, t)
+    v = _oldextract(nc, 'vvel'+surf, t)
+    c = _oldextract(nc, 'c'+surf, t)
     u = np.ma.masked_where(thk < 1, u)
     v = np.ma.masked_where(thk < 1, v)
     return mplt.streamplot(x, y, u, v,
