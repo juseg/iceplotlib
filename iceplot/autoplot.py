@@ -38,6 +38,13 @@ def imshow(filename, varname, t=0, **kwargs):
     cb = mplt.colorbar(im, ax.cax)
     cb.set_label(nc.variables[varname].long_name)
 
+### Specific mapping functions ###
+
+def icemargin(filename, t=0, **kwargs):
+    nc = Dataset(filename)
+    ax = _init_figure(nc, cbar_mode='none')
+    im = iplt.icemargin(filename, t, **kwargs)
+
 ### Image mapping functions ###
 
 def bedtopoimage(nc, t=0, **kwargs):

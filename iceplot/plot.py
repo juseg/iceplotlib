@@ -109,6 +109,24 @@ def imshow(filename, varname, t=0, **kwargs):
     nc.close()
     return im
 
+### Specific mapping functions ###
+
+def icemargin(filename, t=0, **kwargs):
+    """
+    Draw a contour along the ice margin.
+    """
+    nc = Dataset(filename)
+    x = nc.variables['x'][:]
+    y = nc.variables['y'][:]
+    mask = nc.variables['mask'][t].T
+    nc.close()
+    icy = (mask == 1) + (mask == 2)
+    ax = gca()
+    return ax.contour(x, y, icy, levels=[0.5],
+                      colors = kwargs.pop('colors', ['black']),
+                      **kwargs)
+
+
 ### Image mapping functions ###
 
 def bedtopoimage(nc, t=0, **kwargs):
