@@ -19,19 +19,19 @@ def _init_figure(nc, cbar_mode=None):
 
 def contour(nc, varname, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='single')
-    im = iplt.contour(nc, varname, t=t, **kwargs)
+    im = iplt.contour(nc, varname, t=t, ax=ax, **kwargs)
     cb = mplt.colorbar(im, ax.cax)
     cb.set_label(nc.variables[varname].long_name)
 
 def contourf(nc, varname, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='single')
-    im = iplt.contourf(nc, varname, t=t, **kwargs)
+    im = iplt.contourf(nc, varname, t=t, ax=ax, **kwargs)
     cb = mplt.colorbar(im, ax.cax)
     cb.set_label(nc.variables[varname].long_name)
 
 def imshow(nc, varname, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='single')
-    im = iplt.imshow(nc, varname, t=t, **kwargs)
+    im = iplt.imshow(nc, varname, t=t, ax=ax, **kwargs)
     cb = mplt.colorbar(im, ax.cax)
     cb.set_label(nc.variables[varname].long_name)
 
@@ -39,7 +39,7 @@ def imshow(nc, varname, t=0, **kwargs):
 
 def icemargin(nc, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='none')
-    im = iplt.icemargin(nc, t=t, **kwargs)
+    im = iplt.icemargin(nc, t=t, ax=ax, **kwargs)
 
 ### Image mapping functions ###
 
@@ -177,7 +177,7 @@ surfvelstreamplot.__doc__ = iplt.surfvelstreamplot.__doc__
 
 def icemap(nc, t=0, **kwargs):
     ax = _init_figure(nc, cbar_mode='single')
-    im = iplt.icemap(nc, t=t, **kwargs)
+    im = iplt.icemap(nc, t=t, ax=ax, **kwargs)
     cb = mplt.colorbar(im, ax.cax)
     cb.set_label('ice surface velocity (m/yr)')
 
