@@ -116,9 +116,26 @@ def quiver(nc, varname, t=None, ax=None, **kwargs):
       norm = kwargs.pop('norm', default_norms.get('c'+varname.lstrip('vel'))),
       **kwargs)
 
+def streamplot(nc, varname, t=None, ax=None, **kwargs):
+    x, y, u = _extract(nc, 'u'+varname, t)
+    x, y, v = _extract(nc, 'v'+varname, t)
+    for cname in ['c'+varname.lstrip('vel'), varname+'_mag']:
+        if cname in nc.variables:
+            c = _extract(nc, cname, t)[-1]
+            break
+    else:
+        c = (u**2 + v**2)**0.5
+    ax = ax or gca()
+    return ax.streamplot(x, y, u, v,
+      density = kwargs.pop('density', (1.0, 1.0*len(y)/len(x))),
+      color   = kwargs.pop('color', c),
+      cmap = kwargs.pop('cmap', default_cmaps.get('c'+varname.lstrip('vel'))),
+      norm = kwargs.pop('norm', default_norms.get('c'+varname.lstrip('vel'))),
+      **kwargs)
+
 ### Specific mapping functions ###
 
-def icemargin(nc, t=0, ax=None, **kwargs):
+def icemargin(nc, t=None, ax=None, **kwargs):
     """
     Draw a contour along the ice margin.
     """
@@ -436,33 +453,6 @@ def basevelcontour(nc, t=0, **kwargs):
 def surfvelcontour(nc, t=0, **kwargs):
     """Draw surface velocity contours."""
     return _icevelcontour(nc, t, 'surf', **kwargs)
-
-### Streamplot mapping functions ###
-
-def _icevelstreamplot(nc, t=0, surf='surf', **kwargs):
-    """Draw ice velocity quiver"""
-    x = np.arange(len(nc.dimensions['x']))
-    y = np.arange(len(nc.dimensions['y']))
-    thk = _oldextract(nc, 'thk', t)
-    u = _oldextract(nc, 'uvel'+surf, t)
-    v = _oldextract(nc, 'vvel'+surf, t)
-    c = _oldextract(nc, 'c'+surf, t)
-    u = np.ma.masked_where(thk < 1, u)
-    v = np.ma.masked_where(thk < 1, v)
-    return mplt.streamplot(x, y, u, v,
-      linewidth = kwargs.pop('linewidths', 0.5),
-      color     = kwargs.pop('color', c),
-      cmap      = kwargs.pop('cmap', default_cmaps['c'+surf]),
-      norm      = kwargs.pop('norm', default_norms['c'+surf]),
-      **kwargs)
-
-def basevelstreamplot(nc, t=0, **kwargs):
-    """Draw basal velocity quiver"""
-    return _icevelstreamplot(nc, t, 'base', **kwargs)
-
-def surfvelstreamplot(nc, t=0, **kwargs):
-    """Draw basal velocity quiver"""
-    return _icevelstreamplot(nc, t, 'surf', **kwargs)
 
 ### Composite mapping functions ###
 
