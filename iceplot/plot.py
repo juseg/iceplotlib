@@ -97,6 +97,25 @@ def imshow(nc, varname, t=None, ax=None, **kwargs):
       **kwargs)
     return im
 
+def quiver(nc, varname, t=None, ax=None, **kwargs):
+    x, y, u = _extract(nc, 'u'+varname, t)
+    x, y, v = _extract(nc, 'v'+varname, t)
+    for cname in ['c'+varname.lstrip('vel'), varname+'_mag']:
+        if cname in nc.variables:
+            c = _extract(nc, cname, t)[-1]
+            break
+    else:
+        c = (u**2 + v**2)**0.5
+    scale = kwargs.pop('scale', 100)
+    u = np.sign(u)*np.log(1+np.abs(u)/scale)
+    v = np.sign(v)*np.log(1+np.abs(v)/scale)
+    ax = ax or gca()
+    return ax.quiver(x, y, u, v, c,
+      scale = scale,
+      cmap = kwargs.pop('cmap', default_cmaps.get('c'+varname.lstrip('vel'))),
+      norm = kwargs.pop('norm', default_norms.get('c'+varname.lstrip('vel'))),
+      **kwargs)
+
 ### Specific mapping functions ###
 
 def icemargin(nc, t=0, ax=None, **kwargs):
@@ -417,36 +436,6 @@ def basevelcontour(nc, t=0, **kwargs):
 def surfvelcontour(nc, t=0, **kwargs):
     """Draw surface velocity contours."""
     return _icevelcontour(nc, t, 'surf', **kwargs)
-
-### Quiver mapping functions ###
-
-def _icevelquiver(nc, t=0, surf='surf', **kwargs):
-    """Draw ice velocity quiver"""
-    thk = _oldextract(nc, 'thk', t)
-    u = _oldextract(nc, 'uvel'+surf, t)
-    v = _oldextract(nc, 'vvel'+surf, t)
-    try:
-      c = _oldextract(nc, 'c'+surf, t)
-    except KeyError:
-      c = (u**2 + v**2)**0.5
-    scale = kwargs.pop('scale', 100)
-    u = np.sign(u)*np.log(1+np.abs(u)/scale)
-    v = np.sign(v)*np.log(1+np.abs(v)/scale)
-    u = np.ma.masked_where(thk < 1, u)
-    v = np.ma.masked_where(thk < 1, v)
-    return mplt.quiver(u, v, c,
-      scale = scale,
-      cmap = kwargs.pop('cmap', icm.velocity),
-      norm = kwargs.pop('norm', mcolors.LogNorm(10, 10000)),
-      **kwargs)
-
-def basevelquiver(nc, t=0, **kwargs):
-    """Draw basal velocity quiver"""
-    return _icevelquiver(nc, t, 'base', **kwargs)
-
-def surfvelquiver(nc, t=0, **kwargs):
-    """Draw basal velocity quiver"""
-    return _icevelquiver(nc, t, 'surf', **kwargs)
 
 ### Streamplot mapping functions ###
 
