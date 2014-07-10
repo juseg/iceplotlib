@@ -8,7 +8,6 @@ from netCDF4 import Dataset
 from matplotlib import pyplot as mplt
 from matplotlib.pyplot import gca
 from matplotlib import colors as mcolors
-
 from iceplot.colors import default_cmaps, default_norms
 from iceplot import figure as ifig
 
@@ -105,6 +104,44 @@ def imshow(nc, varname, t=None, ax=None, **kwargs):
       extent = kwargs.pop('extent', (w, e, n, s)),
       **kwargs)
     return im
+
+def shading(nc, varname, t=None, ax=None,
+            azimuth=315, altitude=0, **kwargs):
+
+    # extract data
+    x, y, z = _extract(nc, varname, t)
+    w = (3*x[0]-x[1])/2
+    e = (3*x[-1]-x[-2])/2
+    n = (3*y[0]-y[1])/2
+    s = (3*y[-1]-y[-2])/2
+
+    # convert to rad from the x-axis
+    azimuth = (90-azimuth)*np.pi / 180.
+    altitude = altitude*np.pi / 180.
+
+    # compute cartesian coords of the illumination direction
+    x0 = np.cos(azimuth) * np.cos(altitude)
+    y0 = np.sin(azimuth) * np.cos(altitude)
+    z0 = np.sin(altitude)
+    z0 = 0.0  # remove shades from horizontal surfaces
+
+    # compute hillshade (dot product of normal and light direction vectors)
+    dx = x[1] - x[0]
+    dy = y[1] - y[0]
+    u, v = np.gradient(z, dx, dy)
+    shade = (z0 - u*x0 - v*y0) / (1 + u**2 + v**2)**(0.5)
+    print shade.min(), shade.mean(), shade.max()
+    print shade.min(), shade.mean(), shade.max()
+
+    # plot shadows only (white transparency is not possible)
+    ax = ax or gca()
+    cmap = mcolors.LinearSegmentedColormap.from_list('shadow', [
+        (0.0, (0,0,0,0)),
+        (1.0, (0,0,0,1))])
+    return ax.imshow((shade>0)*shade, cmap=cmap,
+      norm=kwargs.pop('norm', mcolors.Normalize(0, 1)),
+      extent = kwargs.pop('extent', (w, e, n, s)),
+      **kwargs)
 
 def quiver(nc, varname, t=None, ax=None, **kwargs):
     x, y, u = _extract(nc, 'u'+varname, t)
