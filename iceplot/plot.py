@@ -31,15 +31,24 @@ def doubleinlinefigure(mapsize, **kwargs):
 
 ### Data extraction ###
 
+def _get_mask(nc, t):
+    """Return ice-cover mask."""
+    try:
+        mask = nc.variables['mask'][t].T
+        mask = (mask == 0) + (mask == 4)
+    except KeyError:
+        mask = nc.variables['thk'][t].T
+        mask = (mask < 1.0)  # TODO: make this a parameter
+    return mask
+
 def _extract(nc, varname, t):
-    """Extract data from a netcdf file"""
+    """Extract data from a netcdf file."""
     x = nc.variables['x'][:]
     y = nc.variables['y'][:]
     z = _oldextract(nc, varname, t)
     if varname not in ('mask', 'topg'):
-        mask = nc.variables['mask'][t].T
-        icefree = (mask == 0) + (mask == 4)
-        z = np.ma.masked_where(icefree, z)
+        mask = _get_mask(nc, t)
+        z = np.ma.masked_where(mask, z)
     return x, y, z
 
 
@@ -139,10 +148,11 @@ def icemargin(nc, t=None, ax=None, **kwargs):
     """
     Draw a contour along the ice margin.
     """
-    x, y, mask = _extract(nc, 'mask', t)
-    icy = (mask == 1) + (mask == 2)
+    x = nc.variables['x'][:]
+    y = nc.variables['y'][:]
+    mask = _get_mask(nc, t)
     ax = ax or gca()
-    return ax.contour(x, y, icy, levels=[0.5],
+    return ax.contour(x, y, mask, levels=[0.5],
                       colors = kwargs.pop('colors', ['black']),
                       **kwargs)
 
