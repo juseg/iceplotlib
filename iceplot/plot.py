@@ -130,8 +130,6 @@ def shading(nc, varname, t=None, ax=None,
     dy = y[1] - y[0]
     u, v = np.gradient(z, dx, dy)
     shade = (z0 - u*x0 - v*y0) / (1 + u**2 + v**2)**(0.5)
-    print shade.min(), shade.mean(), shade.max()
-    print shade.min(), shade.mean(), shade.max()
 
     # plot shadows only (white transparency is not possible)
     ax = ax or gca()
