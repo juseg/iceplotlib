@@ -37,8 +37,10 @@ def _extract(nc, varname, t):
     y = nc.variables['y'][:]
     z = _oldextract(nc, varname, t)
     if varname not in ('mask', 'topg'):
-        mask = nc.variables['mask'][t].T
-        icefree = (mask == 0) + (mask == 4)
+        #mask = nc.variables['mask'][t].T
+        #icefree = (mask == 0) + (mask == 4)
+        thk = nc.variables['thk'][t].T
+        icefree = (thk < 1.0)
         z = np.ma.masked_where(icefree, z)
     return x, y, z
 
@@ -103,8 +105,10 @@ def icemargin(nc, t=0, ax=None, **kwargs):
     """
     Draw a contour along the ice margin.
     """
-    x, y, mask = _extract(nc, 'mask', t)
-    icy = (mask == 1) + (mask == 2)
+    #x, y, mask = _extract(nc, 'mask', t)
+    #icy = (mask == 1) + (mask == 2)
+    x, y, thk = _extract(nc, 'thk', t)
+    icy = -thk.mask
     ax = ax or gca()
     return ax.contour(x, y, icy, levels=[0.5],
                       colors = kwargs.pop('colors', ['black']),
