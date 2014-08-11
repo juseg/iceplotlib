@@ -31,16 +31,18 @@ def doubleinlinefigure(mapsize, **kwargs):
 
 ### Data extraction ###
 
-def _extract(nc, varname, t):
+def _extract(nc, varname, t, thkth=None):
     """Extract data from a netcdf file"""
     x = nc.variables['x'][:]
     y = nc.variables['y'][:]
     z = _oldextract(nc, varname, t)
     if varname not in ('mask', 'topg'):
-        #mask = nc.variables['mask'][t].T
-        #icefree = (mask == 0) + (mask == 4)
-        thk = nc.variables['thk'][t].T
-        icefree = (thk < 1.0)
+        if thkth is not None:
+            thk = nc.variables['thk'][t].T
+            icefree = (thk < thkth)
+        else:
+            mask = nc.variables['mask'][t].T
+            icefree = (mask == 0) + (mask == 4)
         z = np.ma.masked_where(icefree, z)
     return x, y, z
 
@@ -67,8 +69,8 @@ def _oldextract(nc, varname, t):
 
 ### Generic mapping functions ###
 
-def contour(nc, varname, t=None, ax=None, **kwargs):
-    x, y, z = _extract(nc, varname, t)
+def contour(nc, varname, t=None, ax=None, thkth=None, **kwargs):
+    x, y, z = _extract(nc, varname, t, thkth=thkth)
     ax = ax or gca()
     cs = ax.contour(x[:], y[:], z,
         cmap = kwargs.pop('cmap', default_cmaps.get(varname)),
@@ -76,8 +78,8 @@ def contour(nc, varname, t=None, ax=None, **kwargs):
         **kwargs)
     return cs
 
-def contourf(nc, varname, t=None, ax=None, **kwargs):
-    x, y, z = _extract(nc, varname, t)
+def contourf(nc, varname, t=None, ax=None, thkth=None, **kwargs):
+    x, y, z = _extract(nc, varname, t, thkth=thkth)
     ax = ax or gca()
     cs = ax.contourf(x[:], y[:], z,
         cmap = kwargs.pop('cmap', default_cmaps.get(varname)),
@@ -85,8 +87,8 @@ def contourf(nc, varname, t=None, ax=None, **kwargs):
         **kwargs)
     return cs
 
-def imshow(nc, varname, t=None, ax=None, **kwargs):
-    x, y, z = _extract(nc, varname, t)
+def imshow(nc, varname, t=None, ax=None, thkth=None, **kwargs):
+    x, y, z = _extract(nc, varname, t, thkth=thkth)
     w = (3*x[0]-x[1])/2
     e = (3*x[-1]-x[-2])/2
     n = (3*y[0]-y[1])/2
@@ -101,14 +103,16 @@ def imshow(nc, varname, t=None, ax=None, **kwargs):
 
 ### Specific mapping functions ###
 
-def icemargin(nc, t=0, ax=None, **kwargs):
+def icemargin(nc, t=0, ax=None, thkth=None, **kwargs):
     """
     Draw a contour along the ice margin.
     """
-    #x, y, mask = _extract(nc, 'mask', t)
-    #icy = (mask == 1) + (mask == 2)
-    x, y, thk = _extract(nc, 'thk', t)
-    icy = -thk.mask
+    if thkth is not None:
+        x, y, thk = _extract(nc, 'thk', t, thkth=thkth)
+        icy = -thk.mask
+    else:
+        x, y, mask = _extract(nc, 'mask', t)
+        icy = (mask == 1) + (mask == 2)
     ax = ax or gca()
     return ax.contour(x, y, icy, levels=[0.5],
                       colors = kwargs.pop('colors', ['black']),
@@ -481,7 +485,7 @@ def surfvelstreamplot(nc, t=0, **kwargs):
 
 ### Composite mapping functions ###
 
-def icemap(nc, t=None, ax=None, **kwargs):
+def icemap(nc, t=None, ax=None, thkth=None, **kwargs):
     """Draw basal topography, surface velocity and elevation contours.
 
     **Example:**
@@ -490,17 +494,17 @@ def icemap(nc, t=None, ax=None, **kwargs):
     """
 
     # draw bed topography
-    imshow(nc, 'topg', t=t, ax=ax,
+    imshow(nc, 'topg', t=t, ax=ax, thkth=thkth,
       **{kw: kwargs['topg_'+kw]
         for kw in ('cmap', 'norm') if 'topg_'+kw in kwargs})
 
     # draw surface velocities
-    im = imshow(nc, 'velsurf_mag', t=t, ax=ax,
+    im = imshow(nc, 'velsurf_mag', t=t, ax=ax, thkth=thkth,
       **{kw: kwargs['velsurf_'+kw]
         for kw in ('cmap', 'norm') if 'velsurf_'+kw in kwargs})
 
     # draw surface topography contours
-    contour(nc, 'usurf', t=t, ax=ax,
+    contour(nc, 'usurf', t=t, ax=ax, thkth=thkth,
       **{kw: kwargs['usurf_'+kw]
         for kw in ('levels', 'cmap', 'colors') if 'usurf_'+kw in kwargs})
 
