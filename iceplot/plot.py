@@ -191,6 +191,16 @@ def icemargin(nc, t=None, ax=None, thkth=None, **kwargs):
                       colors = kwargs.pop('colors', ['black']),
                       **kwargs)
 
+def icemarginf(nc, t=None, ax=None, thkth=None, **kwargs):
+    """
+    Fill a contour along the ice margin.
+    """
+    x = nc.variables['x'][:]
+    y = nc.variables['y'][:]
+    mask = _get_mask(nc, t, thkth=thkth)
+    ax = ax or gca()
+    return ax.contourf(x, y, mask, levels=[-0.5, 0.5],
+                      **kwargs)
 
 ### Image mapping functions ###
 
