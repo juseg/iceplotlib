@@ -94,8 +94,6 @@ def contour(nc, varname, t=None, ax=None, thkth=None, **kwargs):
     x, y, z = _extract_xyz(nc, varname, t, thkth=thkth)
     ax = ax or gca()
     cs = ax.contour(x[:], y[:], z,
-        cmap = kwargs.pop('cmap', default_cmaps.get(varname)),
-        norm = kwargs.pop('norm', default_norms.get(varname)),
         **kwargs)
     return cs
 
