@@ -35,6 +35,19 @@ def imshow(nc, varname, t=0, **kwargs):
     cb = mplt.colorbar(im, ax.cax)
     cb.set_label(nc.variables[varname].long_name)
 
+def quiver(nc, varname, t=0, **kwargs):
+    ax = _init_figure(nc, cbar_mode='single')
+    im = iplt.quiver(nc, varname, t=t, ax=ax, **kwargs)
+    cb = mplt.colorbar(im, ax.cax)
+    for cname in ['c'+varname.lstrip('vel'), varname+'_mag']:
+        if cname in nc.variables:
+            cb.set_label(nc.variables[cname].long_name)
+            break
+
+def streamplot(nc, varname, t=0, **kwargs):
+    ax = _init_figure(nc, cbar_mode='none')
+    im = iplt.streamplot(nc, varname, t=t, ax=ax, **kwargs)
+
 ### Specific mapping functions ###
 
 def icemargin(nc, t=0, **kwargs):
