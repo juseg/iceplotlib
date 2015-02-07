@@ -3,7 +3,7 @@ Animation demo.
 """
 
 from netCDF4 import Dataset
-from matplotlib import pyplot as mplt
+from matplotlib import pyplot as plt
 from iceplot import animation as iani
 
 # load data
@@ -13,8 +13,7 @@ nc = Dataset('pism_anim_sample.nc')
 ani = iani.iceanim(nc)
 
 # show
-mplt.show()
+plt.show()
 
 # to save the animation:
 #ani.save('iceanim.mp4')
-
