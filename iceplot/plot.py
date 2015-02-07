@@ -206,12 +206,7 @@ def icemarginf(nc, t=None, ax=None, thkth=None, **kwargs):
 ### Composite mapping functions ###
 
 def icemap(nc, t=None, ax=None, thkth=None, **kwargs):
-    """Draw basal topography, surface velocity and elevation contours.
-
-    **Example:**
-
-    .. plot:: ../examples/pism_icemap_demo.py
-    """
+    """Draw basal topography, surface velocity and elevation contours."""
 
     # draw bed topography
     imshow(nc, 'topg', t=t, ax=ax, thkth=thkth,
