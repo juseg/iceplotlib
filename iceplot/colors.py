@@ -4,7 +4,7 @@ Provide default color preferences for each variable.
 """
 
 from matplotlib.colors import LinearSegmentedColormap, LogNorm, Normalize
-from iceplot.cm import land_topo, topo, velocity
+from iceplot.cm import land_topo, topo, velocity, shades
 
 default_cmaps = {
     'air_temp':         'Spectral_r',
@@ -15,6 +15,7 @@ default_cmaps = {
     'usurf':            land_topo,
     'cbase':            velocity,
     'csurf':            velocity,
+    'shading':          shades,
 }
 
 default_norms = {
@@ -25,4 +26,5 @@ default_norms = {
     'cbase':            LogNorm(10, 10000),
     'csurf':            LogNorm(10, 10000),
     'usurf':            Normalize(0,6000),
+    'shading':          Normalize(0.0, 1.0),
 }

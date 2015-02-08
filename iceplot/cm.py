@@ -61,3 +61,8 @@ _velocity_clist = [
 
 velocity = _cmap_from_list('velocity', _velocity_clist)
 
+# Transparent shadows colormap
+
+_shades_clist = [(0.0, (0,0,0,0)), (1.0, (0,0,0,1))]
+
+shades = _cmap_from_list('shades', _shades_clist)

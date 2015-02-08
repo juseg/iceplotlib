@@ -5,27 +5,25 @@ Provide the actual plotting interface
 
 import numpy as np
 from netCDF4 import Dataset
-from matplotlib import pyplot as mplt
-from matplotlib.pyplot import gca
-from matplotlib import colors as mcolors
+from matplotlib.pyplot import gca, figure
 from iceplot.colors import default_cmaps, default_norms
-from iceplot import figure as ifig
+from iceplot.figure import GridFigure, SimpleFigure, DoubleInlineFigure
 
 ### Figure functions ###
 
 def gridfigure(mapsize, nrows_ncols, **kwargs):
     """Create a new figure and return an :class:iceplot.figure.GridFigure instance"""
-    return mplt.figure(FigureClass=ifig.GridFigure,
+    return figure(FigureClass=GridFigure,
       mapsize=mapsize, nrows_ncols=nrows_ncols, **kwargs)
 
 def simplefigure(mapsize, **kwargs):
     """Create a new figure and return a :class:iceplot.figure.SimpleFigure instance"""
-    return mplt.figure(FigureClass=ifig.SimpleFigure,
+    return figure(FigureClass=SimpleFigure,
       mapsize=mapsize, **kwargs)
 
 def doubleinlinefigure(mapsize, **kwargs):
     """Create a new figure and return a :class:iceplot.figure.DoubleInlineFigure instance"""
-    return mplt.figure(FigureClass=ifig.DoubleInlineFigure,
+    return figure(FigureClass=DoubleInlineFigure,
       mapsize=mapsize, **kwargs)
 
 ### Data extraction ###
@@ -148,11 +146,9 @@ def shading(nc, varname, t=None, ax=None, thkth=None,
 
     # plot shadows only (white transparency is not possible)
     ax = ax or gca()
-    cmap = mcolors.LinearSegmentedColormap.from_list('shadow', [
-        (0.0, (0,0,0,0)),
-        (1.0, (0,0,0,1))])
-    return ax.imshow((shade>0)*shade, cmap=cmap,
-      norm=kwargs.pop('norm', mcolors.Normalize(0, 1)),
+    return ax.imshow((shade>0)*shade,
+      cmap = kwargs.pop('cmap', default_cmaps.get('shading')),
+      norm = kwargs.pop('norm', default_norms.get('shading')),
       extent = kwargs.pop('extent', (w, e, n, s)),
       **kwargs)
 
