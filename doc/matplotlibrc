@@ -1,0 +1,4 @@
+# matplotlib configuration parameters
+
+font.family 		: sans-serif
+font.size   		: 6.0

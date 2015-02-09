@@ -114,6 +114,8 @@ def imshow(nc, varname, t=None, ax=None, thkth=None, **kwargs):
     im = ax.imshow(z,
       cmap = kwargs.pop('cmap', default_cmaps.get(varname)),
       norm = kwargs.pop('norm', default_norms.get(varname)),
+      interpolation=kwargs.pop('interpolation', 'nearest'),
+      origin = kwargs.pop('origin', 'lower'),
       extent = kwargs.pop('extent', (w, e, n, s)),
       **kwargs)
     return im

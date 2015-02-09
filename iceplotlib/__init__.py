@@ -8,9 +8,3 @@ A plotting library for `PISM`_ using `matplotlib`_ and `netcdf4-python`_.
 .. _matplotlib: http://matplotlib.org
 .. _PISM: http://www.pism-docs.org
 """
-
-from matplotlib import pyplot as plt
-
-plt.rc('font', size=6)
-plt.rc('image', interpolation='nearest', origin='lower')
-plt.rc('savefig', dpi=254)
