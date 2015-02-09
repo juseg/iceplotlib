@@ -1,6 +1,5 @@
 figure
 ======
 
-.. automodule:: iceplot.figure
+.. automodule:: iceplotlib.figure
   :members:
-

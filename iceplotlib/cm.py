@@ -1,4 +1,4 @@
-"""pismplot.cm
+""":mod:`iceplotlib.cm`
 
 Provide custom colormaps.
 """

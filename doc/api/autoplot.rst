@@ -1,6 +1,5 @@
 autoplot
 ========
 
-.. automodule:: iceplot.autoplot
+.. automodule:: iceplotlib.autoplot
   :members:
-

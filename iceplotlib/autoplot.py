@@ -1,11 +1,11 @@
-"""iceplot.autoplot
+""":mod:`iceplotlib.autoplot`
 
 Provide an automatic plotting interface to plot entire figures with title and colorbar.
 """
 
 from netCDF4 import Dataset
 from matplotlib import pyplot as mplt
-from iceplot import plot as iplt
+from iceplotlib import plot as iplt
 
 def _init_figure(nc, cbar_mode=None):
     """Prepare figure and return axes for plot"""

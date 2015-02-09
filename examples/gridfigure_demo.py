@@ -4,7 +4,7 @@ Draw multi-panel figure.
 
 from netCDF4 import Dataset
 from matplotlib import pyplot as mplt
-from iceplot import plot as iplt
+from iceplotlib import plot as iplt
 
 # initialize figure
 fig = iplt.gridfigure((30., 60.), (2, 3), cbar_mode='single')

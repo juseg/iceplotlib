@@ -1,6 +1,5 @@
 cm
 ==
 
-.. automodule:: iceplot.cm
+.. automodule:: iceplotlib.cm
   :members:
-

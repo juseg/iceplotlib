@@ -1,4 +1,4 @@
-"""iceplot.figure
+""":mod:`iceplotlib.figure`
 
 Provide GridFigure class and derivatives, where the figure size is computed from a given map size and an axes grid.
 """
@@ -83,5 +83,3 @@ class DoubleInlineFigure(GridFigure):
 
   def __init__(self, mapsize, **kwargs):
     GridFigure.__init__(self, mapsize, (1,2), **kwargs)
-
-

@@ -1,5 +1,5 @@
-Iceplot examples
-================
+Iceplotlib examples
+===================
 
 .. toctree::
 

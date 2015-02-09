@@ -1,5 +1,5 @@
-Iceplot API
-===========
+Iceplotlib API
+==============
 
 .. toctree::
 
@@ -8,4 +8,3 @@ Iceplot API
    cm.rst
    figure.rst
    plot.rst
-

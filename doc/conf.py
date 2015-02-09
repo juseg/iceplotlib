@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Iceplot documentation build configuration file, created by
+# Iceplotlib documentation build configuration file, created by
 # sphinx-quickstart on Thu Apr 11 23:09:01 2013.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -46,8 +46,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Iceplot'
-copyright = u'2013, Julien Seguinot'
+project = u'Iceplotlib'
+copyright = u'2013 -- 2015, Julien Seguinot'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -179,7 +179,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Iceplotdoc'
+htmlhelp_basename = 'Iceplotlibdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -198,7 +198,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'Iceplot.tex', u'Iceplot Documentation',
+  ('index', 'Iceplotlib.tex', u'Iceplotlib Documentation',
    u'Julien Seguinot', 'manual'),
 ]
 
@@ -228,7 +228,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'iceplot', u'Iceplot Documentation',
+    ('index', 'Iceplotlib', u'Iceplotlib Documentation',
      [u'Julien Seguinot'], 1)
 ]
 
@@ -242,8 +242,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'Iceplot', u'Iceplot Documentation',
-   u'Julien Seguinot', 'Iceplot', 'One line description of project.',
+  ('index', 'Iceplotlib', u'Iceplotlib Documentation',
+   u'Julien Seguinot', 'Iceplotlib', 'A plotting library for PISM.',
    'Miscellaneous'),
 ]
 

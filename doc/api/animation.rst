@@ -1,6 +1,5 @@
 animation
 =========
 
-.. automodule:: iceplot.animation
+.. automodule:: iceplotlib.animation
   :members:
-

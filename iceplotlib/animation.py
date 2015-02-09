@@ -1,12 +1,12 @@
-"""iceplot.animation
+""":mod:`iceplotlib.animation`
 
-Draw animations
+Draw animations.
 """
 
 from matplotlib import pyplot as plt
 from matplotlib.animation import FFMpegFileWriter, FuncAnimation
-from iceplot import autoplot as aplt
-from iceplot import plot as iplt
+from iceplotlib import autoplot as aplt
+from iceplotlib import plot as iplt
 
 ### Customized MovieWriter class ###
 
@@ -40,4 +40,3 @@ def _animate(funcname):
     return animfunc
 
 iceanim = _animate('icemap')
-

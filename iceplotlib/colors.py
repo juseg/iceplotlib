@@ -1,10 +1,10 @@
-"""iceplot.colors
+""":mod:`iceplotlib.colors`
 
 Provide default color preferences for each variable.
 """
 
 from matplotlib.colors import LinearSegmentedColormap, LogNorm, Normalize
-from iceplot.cm import land_topo, topo, velocity, shades
+from iceplotlib.cm import land_topo, topo, velocity, shades
 
 default_cmaps = {
     'air_temp':         'Spectral_r',

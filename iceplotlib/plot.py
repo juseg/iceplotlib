@@ -1,28 +1,28 @@
-""":mod:`iceplot.plot`
+""":mod:`iceplotlib.plot`
 
-Provide the actual plotting interface
+Provide the actual plotting interface.
 """
 
 import numpy as np
 from netCDF4 import Dataset
 from matplotlib.pyplot import gca, figure
-from iceplot.colors import default_cmaps, default_norms
-from iceplot.figure import GridFigure, SimpleFigure, DoubleInlineFigure
+from iceplotlib.colors import default_cmaps, default_norms
+from iceplotlib.figure import GridFigure, SimpleFigure, DoubleInlineFigure
 
 ### Figure functions ###
 
 def gridfigure(mapsize, nrows_ncols, **kwargs):
-    """Create a new figure and return an :class:iceplot.figure.GridFigure instance"""
+    """Create a new figure and return an :class:iceplotlib.figure.GridFigure instance"""
     return figure(FigureClass=GridFigure,
       mapsize=mapsize, nrows_ncols=nrows_ncols, **kwargs)
 
 def simplefigure(mapsize, **kwargs):
-    """Create a new figure and return a :class:iceplot.figure.SimpleFigure instance"""
+    """Create a new figure and return a :class:iceplotlib.figure.SimpleFigure instance"""
     return figure(FigureClass=SimpleFigure,
       mapsize=mapsize, **kwargs)
 
 def doubleinlinefigure(mapsize, **kwargs):
-    """Create a new figure and return a :class:iceplot.figure.DoubleInlineFigure instance"""
+    """Create a new figure and return a :class:iceplotlib.figure.DoubleInlineFigure instance"""
     return figure(FigureClass=DoubleInlineFigure,
       mapsize=mapsize, **kwargs)
 
