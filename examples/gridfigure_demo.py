@@ -15,7 +15,7 @@ nc = Dataset('pism_plot_sample.nc')
 # plot
 for ax in fig.grid:
   mplt.axes(ax)
-  im = iplt.icemap(nc, axes=ax)
+  im = iplt.icemap(nc, axes=ax, thkth=1.0)
 
 # add colorbar
 cb = fig.colorbar(im, ax.cax)

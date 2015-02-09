@@ -11,7 +11,7 @@ from iceplotlib import autoplot as aplt
 nc = Dataset('pism_plot_sample.nc')
 
 # plot
-aplt.contour(nc, 'usurf', colors='black')
+aplt.contour(nc, 'usurf', thkth=1.0, colors='black')
 iplt.icemargin(nc)
 
 # show

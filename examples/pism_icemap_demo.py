@@ -10,7 +10,7 @@ from iceplotlib import autoplot as aplt
 nc = Dataset('pism_plot_sample.nc')
 
 # plot
-aplt.icemap(nc, velsurf_cmap='CMRmap_r',
+aplt.icemap(nc, thkth=1.0, velsurf_cmap='CMRmap_r',
             usurf_cmap=None, usurf_colors='k')
 
 # show

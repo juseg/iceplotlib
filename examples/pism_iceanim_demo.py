@@ -10,7 +10,7 @@ from iceplotlib import animation as iani
 nc = Dataset('pism_anim_sample.nc')
 
 # animate
-ani = iani.iceanim(nc)
+ani = iani.iceanim(nc, thkth=1.0)
 
 # show
 plt.show()

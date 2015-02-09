@@ -11,7 +11,7 @@ from iceplotlib import autoplot as aplt
 nc = Dataset('pism_plot_sample.nc')
 
 # plot
-im = aplt.streamplot(nc, 'velsurf')
+im = aplt.streamplot(nc, 'velsurf', thkth=1.0)
 iplt.icemargin(nc)
 
 # show

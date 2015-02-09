@@ -10,7 +10,7 @@ from iceplotlib import autoplot as aplt
 nc = Dataset('pism_plot_sample.nc')
 
 # plot
-im = aplt.contourf(nc, 'topg')
+im = aplt.contourf(nc, 'topg', thkth=1.0)
 
 # show
 nc.close()
