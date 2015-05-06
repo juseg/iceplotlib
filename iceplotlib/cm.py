@@ -32,9 +32,8 @@ _sea_topo_clist = [
 sea_topo = _cmap_from_list('sea_topo', _sea_topo_clist)
 
 _land_topo_clist = [
-(   0., '#d8f2fe'),
-( 0.01, '#94bf8b'),
-(  50., '#acd0a5'),
+(   0., '#acd0a5'),
+(  50., '#94bf8b'),
 ( 100., '#a8c68f'),
 ( 250., '#bdcc96'),
 ( 500., '#d1d7ab'),
