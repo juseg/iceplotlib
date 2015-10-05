@@ -3,6 +3,7 @@ Iceplotlib examples
 
 .. toctree::
 
+    gridfigure_demo
     pism_contour_demo
     pism_contourf_demo
     pism_iceanim_demo
