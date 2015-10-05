@@ -2,7 +2,6 @@
 Draw multi-panel figure.
 """
 
-from netCDF4 import Dataset
 from matplotlib import pyplot as mplt
 from iceplotlib import plot as iplt
 
@@ -10,7 +9,7 @@ from iceplotlib import plot as iplt
 fig = iplt.gridfigure((30., 60.), (2, 3), cbar_mode='single')
 
 # load data
-nc = Dataset('pism_plot_sample.nc')
+nc = iplt.load('pism_plot_sample.nc')
 
 # plot
 for ax in fig.grid:

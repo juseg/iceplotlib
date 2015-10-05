@@ -6,7 +6,6 @@ Compute various types of flowlines.
 import numpy as np
 from netCDF4 import Dataset
 from scipy.interpolate import RegularGridInterpolator
-from iceplotlib.plot import _extract_xyuvc
 
 
 def pathline(nc, varname, origin, t=None, dt=10.0, n=101,

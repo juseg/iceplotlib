@@ -4,10 +4,14 @@ Provide the actual plotting interface.
 """
 
 import numpy as np
-from netCDF4 import Dataset
 from matplotlib.pyplot import gca, figure
 from iceplotlib.colors import default_cmaps, default_norms
 from iceplotlib.figure import GridFigure, SimpleFigure, DoubleInlineFigure
+
+### File open function ###
+def load(filename):
+    from iceplotlib.io import IceDataset
+    return IceDataset(filename)
 
 ### Figure functions ###
 
@@ -26,77 +30,17 @@ def doubleinlinefigure(mapsize, **kwargs):
     return figure(FigureClass=DoubleInlineFigure,
       mapsize=mapsize, **kwargs)
 
-### Data extraction ###
-
-def _extract_2d(nc, varname, t):
-    """Extract two-dimensional array from a netcdf variable."""
-    var = nc.variables[varname]
-
-    if t == 'djf':
-      z = var[[12,0,1]].mean(axis=2)
-    elif t == 'mam':
-      z = var[2:5].mean(axis=2)
-    elif t == 'jja':
-      z = var[6:8].mean(axis=2)
-    elif t == 'son':
-      z = var[9:11].mean(axis=2)
-    elif t == 'mean':
-      z = var[:].mean(axis=2)
-    elif t is None:
-      z = var[:].squeeze()
-    else:
-      z = var[t]
-    return z.T
-
-def _extract_mask(nc, t, thkth=None):
-    """Extract ice-cover mask from a netcdf file."""
-    t = t or 0  # if t is None use first time slice
-    if thkth is not None:
-        mask = _extract_2d(nc, 'thk', t)
-        mask = (mask < thkth)
-    else:
-        mask = _extract_2d(nc, 'mask', t)
-        mask = (mask == 0) + (mask == 4)
-    return mask
-
-def _extract_xyuvc(nc, varname, t, thkth=None):
-    """Extract coordinates and vector field from a netcdf file."""
-    x = nc.variables['x'][:]
-    y = nc.variables['y'][:]
-    u = _extract_2d(nc, 'u'+varname, t)
-    v = _extract_2d(nc, 'v'+varname, t)
-    mask = _extract_mask(nc, t, thkth=thkth)
-    u = np.ma.masked_where(mask, u)
-    v = np.ma.masked_where(mask, v)
-    for cname in ['c'+varname.lstrip('vel'), varname+'_mag']:
-        if cname in nc.variables:
-            c = _extract_2d(nc, cname, t)
-            break
-    else:
-        c = (u**2 + v**2)**0.5
-    return x, y, u, v, c
-
-def _extract_xyz(nc, varname, t, thkth=None):
-    """Extract coordinates and scalar field from a netcdf file."""
-    x = nc.variables['x'][:]
-    y = nc.variables['y'][:]
-    z = _extract_2d(nc, varname, t)
-    if varname not in ('mask', 'topg'):
-        mask = _extract_mask(nc, t, thkth=thkth)
-        z = np.ma.masked_where(mask, z)
-    return x, y, z
-
 ### Generic mapping functions ###
 
 def contour(nc, varname, t=None, ax=None, thkth=None, **kwargs):
-    x, y, z = _extract_xyz(nc, varname, t, thkth=thkth)
+    x, y, z = nc.extract_xyz(varname, t, thkth=thkth)
     ax = ax or gca()
     cs = ax.contour(x[:], y[:], z,
         **kwargs)
     return cs
 
 def contourf(nc, varname, t=None, ax=None, thkth=None, **kwargs):
-    x, y, z = _extract_xyz(nc, varname, t, thkth=thkth)
+    x, y, z = nc.extract_xyz(varname, t, thkth=thkth)
     ax = ax or gca()
     cs = ax.contourf(x[:], y[:], z,
         cmap = kwargs.pop('cmap', default_cmaps.get(varname)),
@@ -105,7 +49,7 @@ def contourf(nc, varname, t=None, ax=None, thkth=None, **kwargs):
     return cs
 
 def imshow(nc, varname, t=None, ax=None, thkth=None, **kwargs):
-    x, y, z = _extract_xyz(nc, varname, t, thkth=thkth)
+    x, y, z = nc.extract_xyz(varname, t, thkth=thkth)
     w = (3*x[0]-x[1])/2
     e = (3*x[-1]-x[-2])/2
     n = (3*y[0]-y[1])/2
@@ -124,7 +68,7 @@ def shading(nc, varname, t=None, ax=None, thkth=None,
             azimuth=315, altitude=0, **kwargs):
 
     # extract data
-    x, y, z = _extract_xyz(nc, varname, t, thkth=thkth)
+    x, y, z = nc.extract_xyz(varname, t, thkth=thkth)
     w = (3*x[0]-x[1])/2
     e = (3*x[-1]-x[-2])/2
     n = (3*y[0]-y[1])/2
@@ -155,7 +99,7 @@ def shading(nc, varname, t=None, ax=None, thkth=None,
       **kwargs)
 
 def quiver(nc, varname, t=None, ax=None, thkth=None, **kwargs):
-    x, y, u, v, c = _extract_xyuvc(nc, varname, t, thkth=thkth)
+    x, y, u, v, c = nc.extract_xyuvc(varname, t, thkth=thkth)
     scale = kwargs.pop('scale', 100)
     u = np.sign(u)*np.log(1+np.abs(u)/scale)
     v = np.sign(v)*np.log(1+np.abs(v)/scale)
@@ -167,7 +111,7 @@ def quiver(nc, varname, t=None, ax=None, thkth=None, **kwargs):
       **kwargs)
 
 def streamplot(nc, varname, t=None, ax=None, thkth=None, **kwargs):
-    x, y, u, v, c = _extract_xyuvc(nc, varname, t, thkth=thkth)
+    x, y, u, v, c = nc.extract_xyuvc(varname, t, thkth=thkth)
     ax = ax or gca()
     return ax.streamplot(x, y, u, v,
       density = kwargs.pop('density', (1.0, 1.0*len(y)/len(x))),
@@ -184,7 +128,7 @@ def icemargin(nc, t=None, ax=None, thkth=None, **kwargs):
     """
     x = nc.variables['x'][:]
     y = nc.variables['y'][:]
-    mask = _extract_mask(nc, t, thkth=thkth)
+    mask = nc.extract_mask(t, thkth=thkth)
     ax = ax or gca()
     return ax.contour(x, y, mask, levels=[0.5],
                       colors = kwargs.pop('colors', ['black']),
@@ -196,7 +140,7 @@ def icemarginf(nc, t=None, ax=None, thkth=None, **kwargs):
     """
     x = nc.variables['x'][:]
     y = nc.variables['y'][:]
-    mask = _extract_mask(nc, t, thkth=thkth)
+    mask = nc.extract_mask(t, thkth=thkth)
     ax = ax or gca()
     return ax.contourf(x, y, mask, levels=[-0.5, 0.5],
                       **kwargs)
@@ -222,7 +166,7 @@ def icemap(nc, t=None, ax=None, thkth=None, **kwargs):
         for kw in ('levels', 'cmap', 'colors') if 'usurf_'+kw in kwargs})
 
     # draw ice margin contour
-    icemargin(nc, t=t, ax=ax)
+    icemargin(nc, t=t, ax=ax, thkth=thkth)
 
     # return surface velocity image
     return im

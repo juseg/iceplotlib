@@ -2,13 +2,12 @@
 Draw a streamline and a pathline.
 """
 
-from netCDF4 import Dataset
 from matplotlib import pyplot as plt
 from iceplotlib import autoplot as aplt
 from iceplotlib.flowlines import streamline, pathline
 
 # load data
-nc = Dataset('pism_anim_sample.nc')
+nc = aplt.load('pism_anim_sample.nc')
 
 # parameters
 t = -20e3

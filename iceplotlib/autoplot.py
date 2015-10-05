@@ -15,6 +15,9 @@ def _init_figure(nc, cbar_mode=None):
     fig = iplt.simplefigure(mapsize, cbar_mode=cbar_mode)
     return mplt.axes(fig.grid[0])
 
+### File open function ###
+load = iplt.load
+
 ### Generic mapping functions ###
 
 def contour(nc, varname, t=0, **kwargs):
