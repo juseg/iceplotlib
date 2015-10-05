@@ -10,4 +10,5 @@ Iceplotlib examples
     pism_icemargin_demo
     pism_imshow_demo
     pism_quiver_demo
+    pism_pathline_demo
     pism_streamplot_demo
