@@ -12,7 +12,7 @@ nc = Dataset('pism_plot_sample.nc')
 
 # plot
 aplt.contour(nc, 'usurf', thkth=1.0, colors='black')
-iplt.icemargin(nc)
+iplt.icemargin(nc, thkth=1.0)
 
 # show
 nc.close()

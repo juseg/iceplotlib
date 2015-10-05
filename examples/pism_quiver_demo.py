@@ -12,7 +12,7 @@ nc = Dataset('pism_plot_sample.nc')
 
 # plot
 im = aplt.quiver(nc, 'velsurf', thkth=1.0)
-iplt.icemargin(nc)
+iplt.icemargin(nc, thkth=1.0)
 
 # show
 nc.close()
