@@ -2,15 +2,15 @@
 Plot an image map of bedrock surface elevation.
 """
 
-from matplotlib import pyplot as plt
-from iceplotlib import autoplot as aplt
+import iceplotlib.plot as iplt
 
 # load data
-nc = aplt.load('pism_plot_sample.nc')
+nc = iplt.load('pism_plot_sample.nc')
 
 # plot
-im = aplt.contourf(nc, 'topg', thkth=1.0)
+iplt.axes(projection='mapaxes')
+iplt.contourf(nc, 'topg', thkth=1.0)
 
 # show
 nc.close()
-plt.show()
+iplt.show()

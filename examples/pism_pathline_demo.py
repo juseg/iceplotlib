@@ -2,12 +2,11 @@
 Draw a streamline and a pathline.
 """
 
-from matplotlib import pyplot as plt
-from iceplotlib import autoplot as aplt
+import iceplotlib.plot as iplt
 from iceplotlib.flowlines import streamline, pathline
 
 # load data
-nc = aplt.load('pism_anim_sample.nc')
+nc = iplt.load('pism_anim_sample.nc')
 
 # parameters
 t = -20e3
@@ -21,24 +20,27 @@ s2yr = 1/(365.0 * 24 * 60 * 60)
 time = nc.variables['time'][:]*s2yr
 tidx = np.argmin(np.abs(time-t))
 
+# create map axes
+iplt.axes(projection='mapaxes')
+
 # plot background map
-aplt.icemap(nc, t=tidx, thkth=thkth, velsurf_cmap='CMRmap_r',
+iplt.icemap(nc, t=tidx, thkth=thkth, velsurf_cmap='CMRmap_r',
             usurf_cmap=None, usurf_colors='k')
 
 # plot streamline
 times, positions = streamline(nc, 'velsurf', t=t, thkth=1.0, origin=origin,
                               dt=10.0, n=501)
-plt.plot(positions[:,0], positions[:,1], 'b.-')
+iplt.plot(positions[:,0], positions[:,1], 'b.-')
 
 # plot pathline (trajectory)
 times, positions = pathline(nc, 'velsurf', t=t, thkth=1.0, origin=origin,
                             dt=10.0, n=501)
-plt.plot(positions[:,0], positions[:,1], 'r.-')
+iplt.plot(positions[:,0], positions[:,1], 'r.-')
 
 # set limits to hide streamline exiting the frame
-plt.xlim(-2.5e6, -1e6)
-plt.ylim(0e6, 3e6)
+iplt.xlim(-2.5e6, -1e6)
+iplt.ylim(0e6, 3e6)
 
 # show
 nc.close()
-plt.show()
+iplt.show()

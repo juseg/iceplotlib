@@ -2,8 +2,8 @@
 Animation demo.
 """
 
-from matplotlib import pyplot as plt
-from iceplotlib import animation as iani
+import iceplotlib.plot as iplt
+import iceplotlib.animation as iani
 
 # load data
 nc = iplt.load('pism_anim_sample.nc')
@@ -12,7 +12,7 @@ nc = iplt.load('pism_anim_sample.nc')
 ani = iani.iceanim(nc, thkth=1.0)
 
 # show
-plt.show()
+iplt.show()
 
 # to save the animation:
 #ani.save('iceanim.mp4')
