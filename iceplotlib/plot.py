@@ -14,7 +14,7 @@ def load(filename):
     return IceDataset(filename)
 
 
-# import plotting functions not defined in matplotlib.pyplot
+# import all plotting methods locally defined in MapAxes as functions
 
 def _import_mapaxes_method(name):
     def func(*args, **kwargs):
@@ -23,8 +23,6 @@ def _import_mapaxes_method(name):
     func.__doc__ = getattr(MapAxes, name).__doc__
     globals()[name] = func
 
-_import_mapaxes_method('icemargin')
-_import_mapaxes_method('icemarginf')
-_import_mapaxes_method('icemap')
-_import_mapaxes_method('shading')
-_import_mapaxes_method('streamplot')
+for name, attr in MapAxes.__dict__.iteritems():
+    if callable(attr) and not name.startswith("__"):
+        _import_mapaxes_method(name)
