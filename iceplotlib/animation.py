@@ -3,10 +3,8 @@
 Draw animations.
 """
 
-from matplotlib import pyplot as plt
 from matplotlib.animation import FFMpegFileWriter, FuncAnimation
-from iceplotlib import autoplot as aplt
-from iceplotlib import plot as iplt
+from iceplotlib.plot import gca
 
 ### Customized MovieWriter class ###
 
@@ -26,17 +24,16 @@ class IceWriter(FFMpegFileWriter):
 
 ### Animations ###
 
-def _animate(funcname):
-    """Transform a plotting function into an animation function"""
+def _animate_mapaxes_method(name):
+    """Transform a plotting method into an animation function"""
+    def func(nc, *args, **kwargs):
+        ax = gca()
+        frames = kwargs.pop('frames', range(len(nc.dimensions['time'])))
+        def update(t):
+            ax.cla()
+            getattr(ax, name)(nc, *args, t=t, **kwargs)
+        update(frames[0])
+        return FuncAnimation(ax.figure, update, frames)
+    return func
 
-    def animfunc(nc, t=None):
-      def update(i):
-        plt.cla()
-        getattr(iplt, funcname)(nc, i)
-      t = t or range(len(nc.dimensions['time']))
-      getattr(aplt, funcname)(nc, t[0])
-      return FuncAnimation(plt.gcf(), update, t)
-
-    return animfunc
-
-iceanim = _animate('icemap')
+iceanim = _animate_mapaxes_method('icemap')
