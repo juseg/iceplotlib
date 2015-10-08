@@ -5,6 +5,7 @@ Provide custom classes derived from matplotlib Axes.
 
 import numpy as np
 from matplotlib.axes import Axes
+from iceplotlib.colors import default_cmaps, default_norms
 
 
 class MapAxes(Axes):
