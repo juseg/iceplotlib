@@ -30,6 +30,58 @@ def load(filename, **kwargs):
         return MFIceDataset(filename, **kwargs)
 
 
+# figure creation functions
+
+def subplots_inches(nrows=1, ncols=1, figsize=None,
+                    left=None, bottom=None, right=None, top=None,
+                    wspace=None, hspace=None, projection=None, **kwargs):
+    from matplotlib.pyplot import rcParams, subplots
+
+    # get figure dimensions from rc params if missing
+    figw, figh = figsize or rcParams['figure.figsize']
+
+    # normalize inner spacing to axes dimensions
+    if wspace is not None:
+        wspace = (((figw-left-right)/wspace+1)/ncols-1)**(-1)
+    if hspace is not None:
+        hspace = (((figh-bottom-top)/hspace+1)/nrows-1)**(-1)
+
+    # normalize outer margins to figure dimensions
+    if left is not None:
+        left = left/figw
+    if right is not None:
+        right = 1-right/figw
+    if bottom is not None:
+        bottom = bottom/figh
+    if top is not None:
+        top = 1-top/figh
+
+    # pass projection argument to subplot keywords
+    subplot_kw = kwargs.pop('subplot_kw', {})
+    if projection is not None:
+        subplot_kw['projection'] = projection
+
+    # return figure and subplot grid
+    return subplots(nrows=nrows, ncols=ncols, figsize=figsize,
+                    gridspec_kw={'left': left, 'right': right,
+                                 'bottom': bottom, 'top': top,
+                                 'wspace': wspace, 'hspace': hspace},
+                    subplot_kw=subplot_kw, **kwargs)
+
+
+def subplots_mm(nrows=1, ncols=1, figsize=None,
+                left=None, bottom=None, right=None, top=None,
+                wspace=None, hspace=None, projection=None, **kwargs):
+    mm = 1/25.4  # one millimeter in inches
+    figw, figh = figsize
+    return subplots_inches(nrows=nrows, ncols=ncols,
+                           figsize=(figw*mm, figh*mm),
+                           left=left*mm, right=right*mm,
+                           bottom=bottom*mm, top=top*mm,
+                           wspace=wspace*mm, hspace=hspace*mm,
+                           projection=projection, **kwargs)
+
+
 # import all plotting methods locally defined in MapAxes as functions
 
 def _import_mapaxes_method(name):
