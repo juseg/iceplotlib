@@ -4,7 +4,7 @@ Provide an interface to PISM NetCDF files.
 """
 
 from numpy.ma import masked_where
-from netCDF4 import Dataset
+from netCDF4 import Dataset, MFDataset
 
 
 class IceDataset(Dataset):
@@ -66,3 +66,6 @@ class IceDataset(Dataset):
             mask = self.extract_mask(t, thkth=thkth)
             z = masked_where(mask, z)
         return x, y, z
+
+class MFIceDataset(IceDataset, MFDataset):
+    pass
