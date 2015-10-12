@@ -4,6 +4,7 @@ Draw animations.
 """
 
 from matplotlib.animation import FFMpegFileWriter, FuncAnimation
+from iceplotlib.io import yr2s
 from iceplotlib.plot import gca
 
 ### Customized MovieWriter class ###
@@ -28,7 +29,7 @@ def _animate_mapaxes_method(name):
     """Transform a plotting method into an animation function"""
     def func(nc, *args, **kwargs):
         ax = gca()
-        frames = kwargs.pop('frames', range(len(nc.dimensions['time'])))
+        frames = kwargs.pop('frames', nc.variables['time'][:]/yr2s)
         def update(t):
             ax.cla()
             getattr(ax, name)(nc, *args, t=t, **kwargs)
