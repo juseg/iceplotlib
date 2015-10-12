@@ -30,7 +30,7 @@ class IceDataset(Dataset):
         elif t is None:
             z = var[:].squeeze()
         else:
-            tidx = ((time[:]-t/yr2s)**2).argmin()
+            tidx = ((time[:]-t*yr2s)**2).argmin()
             z = var[tidx]
         return z.T
 
