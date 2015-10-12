@@ -13,13 +13,6 @@ t = -20e3
 origin = (-1800e3, 500e3)
 thkth = 1.0
 
-# locate time index
-# FIXME this should be done in _extract for all plots
-import numpy as np
-s2yr = 1/(365.0 * 24 * 60 * 60)
-time = nc.variables['time'][:]*s2yr
-tidx = np.argmin(np.abs(time-t))
-
 # create map axes
 iplt.axes(projection='mapaxes')
 

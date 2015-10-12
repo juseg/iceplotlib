@@ -6,6 +6,9 @@ Provide an interface to PISM NetCDF files.
 from numpy.ma import masked_where
 from netCDF4 import Dataset, MFDataset
 
+# convert seconds to year
+# FIXME: perform conversion using UDUnits instead
+yr2s = 365.0 * 24 * 60 * 60
 
 class IceDataset(Dataset):
     """NetCDF Dataset with functions for data extraction."""
@@ -13,6 +16,7 @@ class IceDataset(Dataset):
     def _extract_2d(self, varname, t):
         """Extract two-dimensional array from a netcdf variable."""
         var = self.variables[varname]
+        time = self.variables['time']
         if t == 'djf':
             z = var[[12, 0, 1]].mean(axis=2)
         elif t == 'mam':
@@ -26,7 +30,8 @@ class IceDataset(Dataset):
         elif t is None:
             z = var[:].squeeze()
         else:
-            z = var[t]
+            tidx = ((time[:]-t/yr2s)**2).argmin()
+            z = var[tidx]
         return z.T
 
     def extract_mask(self, t, thkth=None):
