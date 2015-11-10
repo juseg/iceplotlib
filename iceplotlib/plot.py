@@ -5,7 +5,6 @@ Provide the actual plotting interface.
 
 import glob
 from matplotlib.pyplot import *
-from iceplotlib.axes import MapAxes
 from iceplotlib.io import IceDataset, MFIceDataset
 
 
@@ -82,15 +81,14 @@ def subplots_mm(nrows=1, ncols=1, figsize=None,
                            projection=projection, **kwargs)
 
 
-# import all plotting methods locally defined in MapAxes as functions
+# import all plotting methods locally defined in IceDataset as functions
 
-def _import_mapaxes_method(name):
-    def func(*args, **kwargs):
-        ax = gca()
-        return getattr(ax, name)(*args, **kwargs)
-    func.__doc__ = getattr(MapAxes, name).__doc__
+def _import_icedataset_method(name):
+    def func(nc, *args, **kwargs):
+        return getattr(nc, name)(*args, **kwargs)
+    func.__doc__ = getattr(IceDataset, name).__doc__
     globals()[name] = func
 
-for name, attr in MapAxes.__dict__.iteritems():
+for name, attr in IceDataset.__dict__.iteritems():
     if callable(attr) and not name.startswith("__"):
-        _import_mapaxes_method(name)
+        _import_icedataset_method(name)

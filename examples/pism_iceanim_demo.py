@@ -9,7 +9,6 @@ import iceplotlib.animation as iani
 nc = iplt.load('pism_anim_sample.nc')
 
 # animate
-iplt.axes(projection='mapaxes')
 ani = iani.iceanim(nc, thkth=1.0)
 
 # show

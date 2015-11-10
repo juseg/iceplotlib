@@ -13,11 +13,8 @@ t = -20e3
 origin = (-1800e3, 500e3)
 thkth = 1.0
 
-# create map axes
-iplt.axes(projection='mapaxes')
-
 # plot background map
-iplt.icemap(nc, t=tidx, thkth=thkth, velsurf_cmap='CMRmap_r',
+iplt.icemap(nc, t=t, thkth=thkth, velsurf_cmap='CMRmap_r',
             usurf_cmap=None, usurf_colors='k')
 
 # plot streamline

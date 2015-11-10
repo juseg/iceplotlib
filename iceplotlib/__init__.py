@@ -9,7 +9,3 @@ A plotting library for `PISM`_ using `matplotlib`_ and `netcdf4-python`_.
 .. _PISM: http://www.pism-docs.org
 """
 
-from iceplotlib.axes import MapAxes
-from matplotlib.projections import register_projection
-
-register_projection(MapAxes)

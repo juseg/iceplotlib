@@ -8,7 +8,6 @@ import iceplotlib.plot as iplt
 nc = iplt.load('pism_plot_sample.nc')
 
 # plot
-iplt.axes(projection='mapaxes')
 iplt.icemargin(nc, thkth=1.0)
 
 # show

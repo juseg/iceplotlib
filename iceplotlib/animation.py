@@ -25,16 +25,16 @@ class IceWriter(FFMpegFileWriter):
 
 ### Animations ###
 
-def _animate_mapaxes_method(name):
+def _animate_icedataset_method(name):
     """Transform a plotting method into an animation function"""
     def func(nc, *args, **kwargs):
         ax = gca()
         frames = kwargs.pop('frames', nc.variables['time'][:]/yr2s)
         def update(t):
             ax.cla()
-            getattr(ax, name)(nc, *args, t=t, **kwargs)
+            getattr(nc, name)(*args, ax=ax, t=t, **kwargs)
         update(frames[0])
         return FuncAnimation(ax.figure, update, frames)
     return func
 
-iceanim = _animate_mapaxes_method('icemap')
+iceanim = _animate_icedataset_method('icemap')
