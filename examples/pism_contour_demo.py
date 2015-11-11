@@ -8,8 +8,8 @@ import iceplotlib.plot as iplt
 nc = iplt.load('pism_plot_sample.nc')
 
 # plot
-iplt.contour(nc, 'usurf', thkth=1.0, colors='black')
-iplt.icemargin(nc, thkth=1.0)
+nc.contour('usurf', thkth=1.0, colors='black')
+nc.icemargin(thkth=1.0)
 
 # show
 nc.close()

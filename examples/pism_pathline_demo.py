@@ -14,7 +14,7 @@ origin = (-1800e3, 500e3)
 thkth = 1.0
 
 # plot background map
-iplt.icemap(nc, t=t, thkth=thkth, velsurf_cmap='CMRmap_r',
+nc.icemap(t=t, thkth=thkth, velsurf_cmap='CMRmap_r',
             usurf_cmap=None, usurf_colors='k')
 
 # plot streamline
