@@ -71,13 +71,29 @@ def subplots_inches(nrows=1, ncols=1, figsize=None,
 def subplots_mm(nrows=1, ncols=1, figsize=None,
                 left=None, bottom=None, right=None, top=None,
                 wspace=None, hspace=None, projection=None, **kwargs):
-    mm = 1/25.4  # one millimeter in inches
-    figw, figh = figsize
-    return subplots_inches(nrows=nrows, ncols=ncols,
-                           figsize=(figw*mm, figh*mm),
-                           left=left*mm, right=right*mm,
-                           bottom=bottom*mm, top=top*mm,
-                           wspace=wspace*mm, hspace=hspace*mm,
+
+    # convert all non null arguments in inches
+    mm = 1/25.4
+    if figsize is not None:
+        figw, figh = figsize
+        figsize = (figw*mm, figh*mm)
+    if left is not None:
+        left*=mm
+    if right is not None:
+        right*=mm
+    if bottom is not None:
+        bottom=bottom*mm
+    if top is not None:
+        top=top*mm
+    if wspace is not None:
+        wspace=wspace*mm
+    if hspace is not None:
+        hspace=hspace*mm
+
+    # use inches helper to align subplots
+    return subplots_inches(nrows=nrows, ncols=ncols, figsize=figsize,
+                           left=left, right=right, bottom=bottom, top=top,
+                           wspace=wspace, hspace=hspace,
                            projection=projection, **kwargs)
 
 
