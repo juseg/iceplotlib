@@ -24,7 +24,7 @@ def _get_map_axes(ax=None):
 class IceDataset(Dataset):
     """NetCDF Dataset with functions for data extraction."""
 
-    def __init__(self, filename, thkth=None, **kwargs):
+    def __init__(self, filename, thkth=1.0, **kwargs):
         Dataset.__init__(self, filename, **kwargs)
         self.__dict__['thkth'] = thkth
 
