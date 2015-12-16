@@ -24,6 +24,10 @@ def _get_map_axes(ax=None):
 class IceDataset(Dataset):
     """NetCDF Dataset with functions for data extraction."""
 
+    def __init__(self, filename, thkth=None, **kwargs):
+        Dataset.__init__(self, filename, **kwargs)
+        self.__dict__['thkth'] = thkth
+
     # data extraction methods
 
     def _extract_2d(self, varname, t):
@@ -50,6 +54,7 @@ class IceDataset(Dataset):
     def extract_mask(self, t, thkth=None):
         """Extract ice-cover mask from a netcdf file."""
         t = t or 0  # if t is None use first time slice
+        thkth = thkth or self.thkth
         if thkth is not None:
             mask = self._extract_2d('thk', t)
             mask = (mask < thkth)
