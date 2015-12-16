@@ -8,7 +8,7 @@ import iceplotlib.plot as iplt
 nc = iplt.load('pism_plot_sample.nc')
 
 # plot
-nc.imshow('topg', thkth=1.0)
+nc.imshow('topg')
 
 # show
 nc.close()

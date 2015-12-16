@@ -9,7 +9,7 @@ import iceplotlib.animation as iani
 nc = iplt.load('pism_anim_sample.nc')
 
 # animate
-ani = iani.iceanim(nc, thkth=1.0)
+ani = iani.iceanim(nc)
 
 # show
 iplt.show()

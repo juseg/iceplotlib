@@ -8,8 +8,7 @@ import iceplotlib.plot as iplt
 nc = iplt.load('pism_plot_sample.nc')
 
 # plot
-nc.icemap(thkth=1.0, velsurf_cmap='CMRmap_r',
-            usurf_cmap=None, usurf_colors='k')
+nc.icemap(velsurf_cmap='CMRmap_r', usurf_cmap=None, usurf_colors='k')
 
 # show
 nc.close()

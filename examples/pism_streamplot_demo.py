@@ -8,8 +8,8 @@ import iceplotlib.plot as iplt
 nc = iplt.load('pism_plot_sample.nc')
 
 # plot
-nc.streamplot('velsurf', thkth=1.0)
-nc.icemargin(thkth=1.0)
+nc.streamplot('velsurf')
+nc.icemargin()
 
 # show
 nc.close()

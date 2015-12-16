@@ -11,20 +11,17 @@ nc = iplt.load('pism_anim_sample.nc')
 # parameters
 t = -20e3
 origin = (-1800e3, 500e3)
-thkth = 1.0
 
 # plot background map
-nc.icemap(t=t, thkth=thkth, velsurf_cmap='CMRmap_r',
-            usurf_cmap=None, usurf_colors='k')
+nc.icemap(t=t, velsurf_cmap='CMRmap_r', usurf_cmap=None, usurf_colors='k')
 
 # plot streamline
-times, positions = streamline(nc, 'velsurf', t=t, thkth=1.0, origin=origin,
+times, positions = streamline(nc, 'velsurf', t=t, origin=origin,
                               dt=10.0, n=501)
 iplt.plot(positions[:,0], positions[:,1], 'b.-')
 
 # plot pathline (trajectory)
-times, positions = pathline(nc, 'velsurf', t=t, thkth=1.0, origin=origin,
-                            dt=10.0, n=501)
+times, positions = pathline(nc, 'velsurf', t=t, origin=origin, dt=10.0, n=501)
 iplt.plot(positions[:,0], positions[:,1], 'r.-')
 
 # set limits to hide streamline exiting the frame
