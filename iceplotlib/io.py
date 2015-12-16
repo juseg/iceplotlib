@@ -22,7 +22,7 @@ def _get_map_axes(ax=None):
 
 
 class IceDataset(Dataset):
-    """NetCDF Dataset with functions for data extraction."""
+    """NetCDF Dataset with plotting methods."""
 
     def __init__(self, filename, thkth=1.0, **kwargs):
         Dataset.__init__(self, filename, **kwargs)
@@ -234,4 +234,8 @@ class IceDataset(Dataset):
         return im
 
 class MFIceDataset(IceDataset, MFDataset):
-    pass
+    """Multi-file NetCDF Dataset with plotting methods."""
+
+    def __init__(self, files, thkth=1.0, **kwargs):
+        MFDataset.__init__(self, files, **kwargs)
+        self.__dict__['thkth'] = thkth
