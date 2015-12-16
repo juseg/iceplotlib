@@ -51,7 +51,7 @@ class IceDataset(Dataset):
             z = var[tidx]
         return z.T
 
-    def extract_mask(self, t, thkth=None):
+    def _extract_mask(self, t, thkth=None):
         """Extract ice-cover mask from a netcdf file."""
         t = t or 0  # if t is None use first time slice
         thkth = thkth or self.thkth
@@ -63,13 +63,13 @@ class IceDataset(Dataset):
             mask = (mask == 0) + (mask == 4)
         return mask
 
-    def extract_xyuvc(self, varname, t, thkth=None):
+    def _extract_xyuvc(self, varname, t, thkth=None):
         """Extract coordinates and vector field from a netcdf file."""
         x = self.variables['x'][:]
         y = self.variables['y'][:]
         u = self._extract_2d('u'+varname, t)
         v = self._extract_2d('v'+varname, t)
-        mask = self.extract_mask(t, thkth=thkth)
+        mask = self._extract_mask(t, thkth=thkth)
         u = np.ma.masked_where(mask, u)
         v = np.ma.masked_where(mask, v)
         for cname in ['c'+varname.lstrip('vel'), varname+'_mag']:
@@ -80,13 +80,13 @@ class IceDataset(Dataset):
             c = (u**2 + v**2)**0.5
         return x, y, u, v, c
 
-    def extract_xyz(self, varname, t, thkth=None):
+    def _extract_xyz(self, varname, t, thkth=None):
         """Extract coordinates and scalar field from a netcdf file."""
         x = self.variables['x'][:]
         y = self.variables['y'][:]
         z = self._extract_2d(varname, t)
         if varname not in ('mask', 'topg') and 'mask' in self.variables:
-            mask = self.extract_mask(t, thkth=thkth)
+            mask = self._extract_mask(t, thkth=thkth)
             z = np.ma.masked_where(mask, z)
         return x, y, z
 
@@ -94,13 +94,13 @@ class IceDataset(Dataset):
 
     def contour(self, varname, ax=None, t=None, thkth=None, **kwargs):
         ax = _get_map_axes(ax)
-        x, y, z = self.extract_xyz(varname, t, thkth=thkth)
+        x, y, z = self._extract_xyz(varname, t, thkth=thkth)
         cs = ax.contour(x[:], y[:], z, **kwargs)
         return cs
 
     def contourf(self, varname, ax=None, t=None, thkth=None, **kwargs):
         ax = _get_map_axes(ax)
-        x, y, z = self.extract_xyz(varname, t, thkth=thkth)
+        x, y, z = self._extract_xyz(varname, t, thkth=thkth)
         cs = ax.contourf(x[:], y[:], z,
                          cmap=kwargs.pop('cmap', default_cmaps.get(varname)),
                          norm=kwargs.pop('norm', default_norms.get(varname)),
@@ -109,7 +109,7 @@ class IceDataset(Dataset):
 
     def imshow(self, varname, ax=None, t=None, thkth=None, **kwargs):
         ax = _get_map_axes(ax)
-        x, y, z = self.extract_xyz(varname, t, thkth=thkth)
+        x, y, z = self._extract_xyz(varname, t, thkth=thkth)
         w = (3*x[0]-x[1])/2
         e = (3*x[-1]-x[-2])/2
         n = (3*y[0]-y[1])/2
@@ -125,7 +125,7 @@ class IceDataset(Dataset):
 
     def quiver(self, varname, ax=None, t=None, thkth=None, **kwargs):
         ax = _get_map_axes(ax)
-        x, y, u, v, c = self.extract_xyuvc(varname, t, thkth=thkth)
+        x, y, u, v, c = self._extract_xyuvc(varname, t, thkth=thkth)
         scale = kwargs.pop('scale', 100)
         u = np.sign(u)*np.log(1+np.abs(u)/scale)
         v = np.sign(v)*np.log(1+np.abs(v)/scale)
@@ -138,7 +138,7 @@ class IceDataset(Dataset):
 
     def streamplot(self, varname, ax=None, t=None, thkth=None, **kwargs):
         ax = _get_map_axes(ax)
-        x, y, u, v, c = self.extract_xyuvc(varname, t, thkth=thkth)
+        x, y, u, v, c = self._extract_xyuvc(varname, t, thkth=thkth)
         return ax.streamplot(x, y, u, v,
                              density=kwargs.pop('density',
                                                 (1.0, 1.0*len(y)/len(x))),
@@ -156,7 +156,7 @@ class IceDataset(Dataset):
         ax = _get_map_axes(ax)
         x = self.variables['x'][:]
         y = self.variables['y'][:]
-        mask = self.extract_mask(t, thkth=thkth)
+        mask = self._extract_mask(t, thkth=thkth)
         return ax.contour(x, y, mask, levels=[0.5],
                           colors=kwargs.pop('colors', ['black']),
                           **kwargs)
@@ -168,7 +168,7 @@ class IceDataset(Dataset):
         ax = _get_map_axes(ax)
         x = self.variables['x'][:]
         y = self.variables['y'][:]
-        mask = self.extract_mask(t, thkth=thkth)
+        mask = self._extract_mask(t, thkth=thkth)
         return ax.contourf(x, y, mask, levels=[-0.5, 0.5],
                            **kwargs)
 
@@ -176,7 +176,7 @@ class IceDataset(Dataset):
                 azimuth=315, altitude=0, **kwargs):
 
         # extract data
-        x, y, z = self.extract_xyz(varname, t, thkth=thkth)
+        x, y, z = self._extract_xyz(varname, t, thkth=thkth)
         w = (3*x[0]-x[1])/2
         e = (3*x[-1]-x[-2])/2
         n = (3*y[0]-y[1])/2
