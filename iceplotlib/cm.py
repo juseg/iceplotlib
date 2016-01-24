@@ -49,7 +49,7 @@ _land_topo_clist = [
 
 land_topo = _cmap_from_list('land_topo', _land_topo_clist)
 
-_topo_clist = _sea_topo_clist[:-1] + _land_topo_clist
+_topo_clist = _sea_topo_clist + _land_topo_clist
 
 topo = _cmap_from_list('topo', _topo_clist)
 
