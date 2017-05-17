@@ -49,7 +49,9 @@ class IceDataset(Dataset):
         else:
             tidx = ((time[:]-t*yr2s)**2).argmin()
             z = var[tidx]
-        return z.T
+        if var.dimensions[-2:] == ('x', 'y'):
+            z = z.T
+        return z
 
     def _extract_mask(self, t, thkth=None):
         """Extract ice-cover mask from a netcdf file."""
