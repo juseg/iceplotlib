@@ -40,9 +40,9 @@ def subplots_inches(nrows=1, ncols=1, figsize=None,
     figw, figh = figsize or rcParams['figure.figsize']
 
     # normalize inner spacing to axes dimensions
-    if wspace is not None:
+    if wspace is not None and wspace != 0.0:
         wspace = (((figw-left-right)/wspace+1)/ncols-1)**(-1)
-    if hspace is not None:
+    if hspace is not None and hspace != 0.0:
         hspace = (((figh-bottom-top)/hspace+1)/nrows-1)**(-1)
 
     # normalize outer margins to figure dimensions
