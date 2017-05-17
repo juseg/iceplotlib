@@ -55,12 +55,14 @@ class IceDataset(Dataset):
         """Extract ice-cover mask from a netcdf file."""
         t = t or 0  # if t is None use first time slice
         thkth = thkth or self.thkth
-        if thkth is not None:
+        if thkth is not None and 'thk' in self.variables:
             mask = self._extract_2d('thk', t)
             mask = (mask < thkth)
-        else:
+        elif 'mask' in self.variables:
             mask = self._extract_2d('mask', t)
             mask = (mask == 0) + (mask == 4)
+        else:
+            mask = None
         return mask
 
     def _extract_xyuvc(self, varname, t, thkth=None):
@@ -85,7 +87,7 @@ class IceDataset(Dataset):
         x = self.variables['x'][:]
         y = self.variables['y'][:]
         z = self._extract_2d(varname, t)
-        if varname not in ('mask', 'topg') and 'mask' in self.variables:
+        if varname not in ('mask', 'topg'):
             mask = self._extract_mask(t, thkth=thkth)
             z = np.ma.masked_where(mask, z)
         return x, y, z
