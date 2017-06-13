@@ -44,7 +44,7 @@ class IceDataset(Dataset):
             z = var[9:11].mean(axis=2)
         elif t == 'mean':
             z = var[:].mean(axis=2)
-        elif t is None:
+        elif t is None or len(var.shape) == 2:
             z = var[:].squeeze()
         else:
             tidx = ((time[:]-t*yr2s)**2).argmin()
