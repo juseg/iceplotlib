@@ -33,7 +33,8 @@ def load(filename, **kwargs):
 
 def subplots_inches(nrows=1, ncols=1, figsize=None,
                     left=None, bottom=None, right=None, top=None,
-                    wspace=None, hspace=None, projection=None, **kwargs):
+                    wspace=None, hspace=None, width_ratios=None,
+                    height_ratios=None, projection=None, **kwargs):
     from matplotlib.pyplot import rcParams, subplots
 
     # get figure dimensions from rc params if missing
@@ -64,13 +65,16 @@ def subplots_inches(nrows=1, ncols=1, figsize=None,
     return subplots(nrows=nrows, ncols=ncols, figsize=figsize,
                     gridspec_kw={'left': left, 'right': right,
                                  'bottom': bottom, 'top': top,
-                                 'wspace': wspace, 'hspace': hspace},
+                                 'wspace': wspace, 'hspace': hspace,
+                                 'width_ratios': width_ratios,
+                                 'height_ratios': height_ratios},
                     subplot_kw=subplot_kw, **kwargs)
 
 
 def subplots_mm(nrows=1, ncols=1, figsize=None,
                 left=None, bottom=None, right=None, top=None,
-                wspace=None, hspace=None, projection=None, **kwargs):
+                wspace=None, hspace=None, width_ratios=None,
+                height_ratios=None, projection=None, **kwargs):
 
     # convert all non null arguments in inches
     mm = 1/25.4
@@ -94,6 +98,8 @@ def subplots_mm(nrows=1, ncols=1, figsize=None,
     return subplots_inches(nrows=nrows, ncols=ncols, figsize=figsize,
                            left=left, right=right, bottom=bottom, top=top,
                            wspace=wspace, hspace=hspace,
+                           width_ratios=width_ratios,
+                           height_ratios=height_ratios,
                            projection=projection, **kwargs)
 
 
