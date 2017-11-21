@@ -4,6 +4,7 @@ Provide the actual plotting interface.
 """
 
 import glob
+import matplotlib.pyplot as plt
 import matplotlib.figure as mfig
 from matplotlib.pyplot import *
 from iceplotlib.io import IceDataset, MFIceDataset
@@ -80,6 +81,34 @@ def load(filename, **kwargs):
     # open multiple files as multiple file dataset
     else:
         return MFIceDataset(filename, **kwargs)
+
+
+# Figure helper functions
+# -----------------------
+
+def figure(**kw):
+    """Create a new figure with dimensions in inches."""
+
+    # by default select custom figure class
+    FigureClass = kw.pop('FigureClass', IceFigure)
+
+    # create new figure
+    fig = plt.figure(FigureClass=FigureClass, **kw)
+    return fig
+
+
+def figure_mm(figsize=None, **kw):
+    """Create a new figure with dimensions in mm."""
+
+    # convert figure size to mm
+    mm = 1/25.4
+    if figsize is not None:
+        figw, figh = figsize
+        figsize = (figw*mm, figh*mm)
+
+    # create new figure
+    fig = figure(figsize=figsize, **kw)
+    return fig
 
 
 # figure creation functions
