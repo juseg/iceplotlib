@@ -16,6 +16,10 @@ from iceplotlib.io import IceDataset, MFIceDataset
 class IceFigure(mfig.Figure):
     """Custom figure class allowing absolute subplot dimensioning."""
 
+    def get_size_mm():
+        """Returns the current size of the figure in mm as an numpy array."""
+        return fig.get_size_inches()*25.4
+
     def subplots_inches(self, nrows=1, ncols=1, gridspec_kw=None, **kw):
         """Create subplots with dimensions in inches."""
 
