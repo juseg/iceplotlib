@@ -21,30 +21,26 @@ class IceFigure(mfig.Figure):
         # get figure dimensions in inches
         figw, figh = self.get_size_inches()
 
-        # make sure all gridspec keywords are defined
+        # get default gridspec params
         if gridspec_kw is None:
             gridspec_kw = {}
-        for dim in ['left', 'right', 'bottom', 'top', 'wspace', 'hspace']:
-            if dim not in gridspec_kw:
-                gridspec_kw[dim] = self.subplotpars.__getattribute__(dim)
-
-        print gridspec_kw
+        left = gridspec_kw.pop('left', self.subplotpars.left)
+        right = gridspec_kw.pop('right', self.subplotpars.right)
+        bottom = gridspec_kw.pop('bottom', self.subplotpars.bottom)
+        top = gridspec_kw.pop('top', self.subplotpars.top)
+        wspace = gridspec_kw.pop('wspace', self.subplotpars.wspace)
+        hspace = gridspec_kw.pop('hspace', self.subplotpars.hspace)
 
         # normalize inner spacing to axes dimensions
-        if gridspec_kw['wspace'] != 0.0:
-            # wspace = (((figw-left-right)/wspace+1)/ncols-1)**(-1)
-            plw = figw - gridspec_kw['left'] - gridspec_kw['right']
-            gridspec_kw['wspace'] = 1.0/((plw/gridspec_kw['wspace']+1)/ncols-1)
-        if gridspec_kw['hspace'] != 0.0:
-            # hspace = (((figh-bottom-top)/hspace+1)/nrows-1)**(-1)
-            plh = figh - gridspec_kw['bottom'] - gridspec_kw['top']
-            gridspec_kw['hspace'] = 1.0/((plh/gridspec_kw['hspace']+1)/nrows-1)
+        if wspace != 0.0:
+            wspace = (((figw-left-right)/wspace+1)/ncols-1)**(-1)
+        if hspace != 0.0:
+            hspace = (((figh-bottom-top)/hspace+1)/nrows-1)**(-1)
 
         # normalize outer margins to figure dimensions
-        gridspec_kw['left'] = gridspec_kw['left']/figw
-        gridspec_kw['right'] = 1-gridspec_kw['right']/figw
-        gridspec_kw['bottom'] = gridspec_kw['bottom']/figh
-        gridspec_kw['top'] = 1-gridspec_kw['top']/figh
+        gridspec_kw = dict(left=left/figw, right=1-right/figw,
+                           bottom=bottom/figh, top=1-top/figh,
+                           wspace=wspace, hspace=hspace)
 
         # create subplots
         return mfig.Figure.subplots(self, nrows=nrows, ncols=ncols,
