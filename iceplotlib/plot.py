@@ -4,11 +4,68 @@ Provide the actual plotting interface.
 """
 
 import glob
+import matplotlib.figure as mfig
 from matplotlib.pyplot import *
 from iceplotlib.io import IceDataset, MFIceDataset
 
 
-# file open function
+# Custom figure class
+# -------------------
+
+class IceFigure(mfig.Figure):
+    """Custom figure class allowing absolute subplot dimensioning."""
+
+    def subplots_inches(self, nrows=1, ncols=1, gridspec_kw=None, **kw):
+        """Create subplots with dimensions in inches."""
+
+        # get figure dimensions in inches
+        figw, figh = self.get_size_inches()
+
+        # make sure all gridspec keywords are defined
+        if gridspec_kw is None:
+            gridspec_kw = {}
+        for dim in ['left', 'right', 'bottom', 'top', 'wspace', 'hspace']:
+            if dim not in gridspec_kw:
+                gridspec_kw[dim] = self.subplotpars.__getattribute__(dim)
+
+        print gridspec_kw
+
+        # normalize inner spacing to axes dimensions
+        if gridspec_kw['wspace'] != 0.0:
+            # wspace = (((figw-left-right)/wspace+1)/ncols-1)**(-1)
+            plw = figw - gridspec_kw['left'] - gridspec_kw['right']
+            gridspec_kw['wspace'] = 1.0/((plw/gridspec_kw['wspace']+1)/ncols-1)
+        if gridspec_kw['hspace'] != 0.0:
+            # hspace = (((figh-bottom-top)/hspace+1)/nrows-1)**(-1)
+            plh = figh - gridspec_kw['bottom'] - gridspec_kw['top']
+            gridspec_kw['hspace'] = 1.0/((plh/gridspec_kw['hspace']+1)/nrows-1)
+
+        # normalize outer margins to figure dimensions
+        gridspec_kw['left'] = gridspec_kw['left']/figw
+        gridspec_kw['right'] = 1-gridspec_kw['right']/figw
+        gridspec_kw['bottom'] = gridspec_kw['bottom']/figh
+        gridspec_kw['top'] = 1-gridspec_kw['top']/figh
+
+        # create subplots
+        return mfig.Figure.subplots(self, nrows=nrows, ncols=ncols,
+                                    gridspec_kw=gridspec_kw, **kw)
+
+    def subplots_mm(self, gridspec_kw=None, **kw):
+        """Create subplots with dimensions in mm."""
+
+        # convert all non null arguments to inches
+        mm = 1/25.4
+        if gridspec_kw is not None:
+            for dim in ['left', 'right', 'bottom', 'top', 'wspace', 'hspace']:
+                if dim in gridspec_kw:
+                    gridspec_kw[dim] *= mm
+
+        # create subplots
+        return self.subplots_inches(gridspec_kw=gridspec_kw, **kw)
+
+
+# File open function
+# ------------------
 
 def load(filename, **kwargs):
 
