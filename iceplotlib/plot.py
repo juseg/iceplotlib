@@ -43,7 +43,7 @@ class IceFigure(mfig.Figure):
             hspace = (((figh-bottom-top)/hspace+1)/nrows-1)**(-1)
 
         # normalize outer margins to figure dimensions
-        gridspec_kw = dict(left=left/figw, right=1-right/figw,
+        gridspec_kw.update(left=left/figw, right=1-right/figw,
                            bottom=bottom/figh, top=1-top/figh,
                            wspace=wspace, hspace=hspace)
 
