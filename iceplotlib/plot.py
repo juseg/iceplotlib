@@ -111,79 +111,66 @@ def figure_mm(figsize=None, **kw):
     return fig
 
 
-# figure creation functions
+# Subplot helper functions
+# ------------------------
 
-def subplots_inches(nrows=1, ncols=1, figsize=None,
-                    left=None, bottom=None, right=None, top=None,
-                    wspace=None, hspace=None, width_ratios=None,
-                    height_ratios=None, projection=None, **kwargs):
-    from matplotlib.pyplot import rcParams, subplots
-
-    # get figure dimensions from rc params if missing
-    figw, figh = figsize or rcParams['figure.figsize']
-
-    # normalize inner spacing to axes dimensions
-    if wspace is not None and wspace != 0.0:
-        wspace = (((figw-left-right)/wspace+1)/ncols-1)**(-1)
-    if hspace is not None and hspace != 0.0:
-        hspace = (((figh-bottom-top)/hspace+1)/nrows-1)**(-1)
-
-    # normalize outer margins to figure dimensions
-    if left is not None:
-        left = left/figw
-    if right is not None:
-        right = 1-right/figw
-    if bottom is not None:
-        bottom = bottom/figh
-    if top is not None:
-        top = 1-top/figh
+def subplots(nrows=1, ncols=1, sharex=False, sharey=False, squeeze=True,
+             subplot_kw=None, gridspec_kw=None, **fig_kw):
+    """Same as matplotlib function but allow a projection argument."""
 
     # pass projection argument to subplot keywords
-    subplot_kw = kwargs.pop('subplot_kw', {})
+    if subplot_kw is None:
+        subplot_kw = {}
     if projection is not None:
         subplot_kw['projection'] = projection
 
-    # return figure and subplot grid
-    return subplots(nrows=nrows, ncols=ncols, figsize=figsize,
-                    gridspec_kw={'left': left, 'right': right,
-                                 'bottom': bottom, 'top': top,
-                                 'wspace': wspace, 'hspace': hspace,
-                                 'width_ratios': width_ratios,
-                                 'height_ratios': height_ratios},
-                    subplot_kw=subplot_kw, **kwargs)
+    # create new figure and axes
+    fig = figure(**fig_kw)
+    axs = fig.subplots(nrows=nrows, ncols=ncols, sharex=sharex, sharey=sharey,
+                       squeeze=squeeze, subplot_kw=subplot_kw,
+                       gridspec_kw=gridspec_kw)
+    return fig, axs
 
 
-def subplots_mm(nrows=1, ncols=1, figsize=None,
-                left=None, bottom=None, right=None, top=None,
-                wspace=None, hspace=None, width_ratios=None,
-                height_ratios=None, projection=None, **kwargs):
+def subplots_inches(nrows=1, ncols=1, sharex=False, sharey=False, squeeze=True,
+                    subplot_kw=None, gridspec_kw=None, projection=None,
+                    **fig_kw):
+    """Create figure and subplots with dimensions in inches."""
 
-    # convert all non null arguments in inches
-    mm = 1/25.4
-    if figsize is not None:
-        figw, figh = figsize
-        figsize = (figw*mm, figh*mm)
-    if left is not None:
-        left*=mm
-    if right is not None:
-        right*=mm
-    if bottom is not None:
-        bottom=bottom*mm
-    if top is not None:
-        top=top*mm
-    if wspace is not None:
-        wspace=wspace*mm
-    if hspace is not None:
-        hspace=hspace*mm
+    # pass projection argument to subplot keywords
+    if subplot_kw is None:
+        subplot_kw = {}
+    if projection is not None:
+        subplot_kw['projection'] = projection
 
-    # use inches helper to align subplots
-    return subplots_inches(nrows=nrows, ncols=ncols, figsize=figsize,
-                           left=left, right=right, bottom=bottom, top=top,
-                           wspace=wspace, hspace=hspace,
-                           width_ratios=width_ratios,
-                           height_ratios=height_ratios,
-                           projection=projection, **kwargs)
+    # create new figure and axes
+    fig = figure(**fig_kw)
+    axs = fig.subplots_inches(nrows=nrows, ncols=ncols, sharex=sharex,
+                              sharey=sharey, squeeze=squeeze,
+                              subplot_kw=subplot_kw, gridspec_kw=gridspec_kw)
+    return fig, axs
 
+
+def subplots_mm(nrows=1, ncols=1, sharex=False, sharey=False, squeeze=True,
+                subplot_kw=None, gridspec_kw=None, projection=None, **fig_kw):
+    """Create figure and subplots with dimensions in mm."""
+
+    # pass projection argument to subplot keywords
+    if subplot_kw is None:
+        subplot_kw = {}
+    if projection is not None:
+        subplot_kw['projection'] = projection
+
+    # create new figure and axes
+    fig = figure_mm(**fig_kw)
+    axs = fig.subplots_mm(nrows=nrows, ncols=ncols, sharex=sharex,
+                          sharey=sharey, squeeze=squeeze,
+                          subplot_kw=subplot_kw, gridspec_kw=gridspec_kw)
+    return fig, axs
+
+
+# Plotting functions
+# ------------------
 
 # import all plotting methods locally defined in IceDataset as functions
 
@@ -192,6 +179,7 @@ def _import_icedataset_method(name):
         return getattr(nc, name)(*args, **kwargs)
     func.__doc__ = getattr(IceDataset, name).__doc__
     globals()[name] = func
+
 
 for name, attr in IceDataset.__dict__.iteritems():
     if callable(attr) and not name.startswith("__"):
