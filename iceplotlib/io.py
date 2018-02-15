@@ -79,6 +79,7 @@ class IceDataset(Dataset):
         for cname in ['c'+varname.lstrip('vel'), varname+'_mag']:
             if cname in self.variables:
                 c = self._extract_2d(cname, t)
+                c = np.ma.masked_where(mask, c)
                 break
         else:
             c = (u**2 + v**2)**0.5
@@ -148,6 +149,8 @@ class IceDataset(Dataset):
             slow = c < velth
             u = np.ma.masked_where(slow, u)
             v = np.ma.masked_where(slow, v)
+        u[u.mask] = np.nan  # bug in cartopy streamplot?
+        v[v.mask] = np.nan  # bug in cartopy streamplot?
         return ax.streamplot(x, y, u, v,
                              density=kwargs.pop('density',
                                                 (1.0, 1.0*len(y)/len(x))),
