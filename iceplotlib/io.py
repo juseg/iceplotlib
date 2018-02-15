@@ -140,9 +140,14 @@ class IceDataset(Dataset):
                             'c'+varname.lstrip('vel'))),
                          **kwargs)
 
-    def streamplot(self, varname, ax=None, t=None, thkth=None, **kwargs):
+    def streamplot(self, varname, ax=None, t=None, thkth=None, velth=None,
+                   **kwargs):
         ax = _get_map_axes(ax)
         x, y, u, v, c = self._extract_xyuvc(varname, t, thkth=thkth)
+        if velth is not None:
+            slow = c < velth
+            u = np.ma.masked_where(slow, u)
+            v = np.ma.masked_where(slow, v)
         return ax.streamplot(x, y, u, v,
                              density=kwargs.pop('density',
                                                 (1.0, 1.0*len(y)/len(x))),
